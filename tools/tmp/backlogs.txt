@@ -1,0 +1,2 @@
+1. InternalParserBuilder's methods must be static.
+2. Rethink the design structure of top layer. (ParserBuilder / InternalParserBuilder / ParserRegexRule..)
