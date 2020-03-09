@@ -6,6 +6,8 @@
 
 #include <tuple>
 #include <memory>
+#include <vector>
+#include <unordered_set>
 
 #include "quick/hash.hpp"
 #include "quick/stl_utils.hpp"
@@ -26,7 +28,7 @@ class Parser;
 class ParserInstance {
  public:
   ParserInstance() = default;
-  ParserInstance(const Parser& parser);
+  explicit ParserInstance(const Parser& parser);
 
   void Init(const Parser& parser);
   void Reset();

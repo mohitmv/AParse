@@ -9,6 +9,8 @@
 #include <unordered_map>
 #include <utility>
 #include <sstream>
+#include <set>
+
 #include <quick/debug_stream.hpp>
 #include <quick/stl_utils.hpp>
 
@@ -184,7 +186,7 @@ Regex RegexBuilderObject::BuildRegex() const {
 }
 
 Regex RegexBuilderObject::BuildRegex(AlphabetMap* alphabet_map) const {
-  _APARSE_DEBUG_ASSERT(alphabet_map->size() == 0);
+  APARSE_DEBUG_ASSERT(alphabet_map->size() == 0);
   std::set<string> symbols;
   qk::InsertToSet(GetSymbols(), &symbols);
   StringMap symbols_map;

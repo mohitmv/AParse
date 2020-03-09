@@ -50,7 +50,7 @@ configs.dependency_configs = [
                 deps = ["src/regex_builder"]),
 
   br.CppLibrary("src/utils",
-                hdrs = ["include/aparse/utils.hpp"],
+                hdrs = ["src/utils.hpp"],
                 srcs = ["src/utils.cpp"],
                 deps = ["toolchain/quick"]),
 
@@ -62,12 +62,12 @@ configs.dependency_configs = [
                 hdrs = ["src/parse_char_regex.hpp"],
                 srcs = ["src/parse_char_regex.cpp"],
                 deps = ["src/parse_char_regex_rules",
-                        "aparse/internal_parser_builder"]),
+                        "src/internal_parser_builder"]),
 
   br.CppLibrary("src/parse_regex_rule",
                 hdrs = ["src/parse_regex_rule.hpp"],
                 srcs = ["src/parse_regex_rule.cpp"],
-                deps = ["src/internal_lexer",
+                deps = ["src/internal_lexer_builder",
                         "aparse/parser",
                         "src/parse_char_regex"]),
 
@@ -114,11 +114,11 @@ configs.dependency_configs = [
                 srcs = ["src/v2/aparse_machine.cpp"],
                 deps = ["toolchain/quick"]),
 
-  br.CppLibrary("src/aparse_machine_builder",
-                hdrs = ["src/v1/aparse_machine_builder.hpp"],
-                srcs = ["src/v1/aparse_machine_builder.cpp"],
-                deps = ["aparse/aparse_grammar",
-                        "src/v1/aparse_machine"]),
+  # br.CppLibrary("src/v1/aparse_machine_builder",
+  #               hdrs = ["src/v1/aparse_machine_builder.hpp"],
+  #               srcs = ["src/v1/aparse_machine_builder.cpp"],
+  #               deps = ["aparse/aparse_grammar",
+  #                       "src/v1/aparse_machine"]),
 
   br.CppLibrary("src/v2/internal_aparse_grammar",
                 hdrs = ["src/v2/internal_aparse_grammar.hpp"],
@@ -133,9 +133,9 @@ configs.dependency_configs = [
                         "src/v2/aparse_machine",
                         "src/v2/internal_aparse_grammar"]),
 
-  # br.CppTest("src/aparse_machine_test",
-  #               srcs = ["src/aparse_machine_test.cpp"],
-  #               deps = ["aparse/aparse_machine"]),
+  # br.CppTest("src/v1/aparse_machine_test",
+  #               srcs = ["src/v1/aparse_machine_test.cpp"],
+  #               deps = ["src/v1/aparse_machine"]),
 
   br.CppLibrary("aparse/abstract_core_parser",
                 hdrs = ["include/aparse/abstract_core_parser.hpp"],
@@ -164,31 +164,37 @@ configs.dependency_configs = [
                 hdrs = ["include/aparse/parser_builder.hpp"],
                 srcs = ["src/parser_builder.cpp"],
                 deps = ["aparse/parser",
-                        "aparse/internal_parser_builder",
+                        "src/internal_parser_builder",
                         "src/parse_regex_rule",
                         "aparse/error"]),
 
-  br.CppLibrary("aparse/advance_lexer",
-                hdrs = ["include/aparse/advance_lexer.hpp"],
-                srcs = ["src/advance_lexer.cpp"],
-                deps = ["src/internal_lexer",
-                        "src/parse_char_regex",
-                        "aparse/error"]),
+  br.CppLibrary("aparse/lexer",
+                hdrs = ["include/aparse/lexer.hpp"],
+                srcs = ["src/lexer.cpp"],
+                deps = ["aparse/error"]),
 
-  br.CppLibrary("src/internal_lexer",
-                hdrs = ["include/aparse/internal_lexer.hpp"],
-                deps = ["aparse/lexer_machine",
-                        "aparse/lexer_machine_builder",
-                        "aparse/error"]),
+  br.CppLibrary("aparse/lexer_builder",
+                hdrs = ["include/aparse/lexer_builder.hpp"],
+                srcs = ["src/lexer_builder.cpp"],
+                deps = ["aparse/lexer",
+                        "src/internal_lexer_builder",
+                        "src/parse_char_regex"]),
 
-  br.CppLibrary("aparse/internal_parser_builder",
-                hdrs = ["include/aparse/internal_parser_builder.hpp"],
+  br.CppLibrary("src/internal_lexer_builder",
+                hdrs = ["src/internal_lexer_builder.hpp"],
+                srcs = ["src/internal_lexer_builder.cpp"],
+                deps = ["aparse/lexer_machine_builder",
+                        "aparse/error",
+                        "aparse/lexer",
+                        "aparse/regex"]),
+
+  br.CppLibrary("src/internal_parser_builder",
+                hdrs = ["src/internal_parser_builder.hpp"],
                 srcs = ["src/internal_parser_builder.cpp"],
                 deps = ["aparse/parser",
                         "src/v2/core_parser",
                         "toolchain/quick",
                         "src/v2/aparse_machine_builder"]),
-
 
   br.CppLibrary("aparse/parser",
                 hdrs = ["include/aparse/parser.hpp"],
@@ -197,7 +203,6 @@ configs.dependency_configs = [
                         "aparse/error",
                         "src/v2/core_parser",
                         "toolchain/quick"]),
-
 
   br.CppLibrary("src/regex_builder",
                 hdrs = ["src/regex_builder.hpp"],
@@ -213,28 +218,13 @@ configs.dependency_configs = [
                         "aparse/aparse_grammar"]),
 
   br.CppLibrary("aparse/aparse",
-                hdrs = ["aparse/aparse.hpp"],
+                hdrs = ["include/aparse/aparse.hpp"],
                 srcs = ["src/aparse.cpp"],
-                deps = ["toolchain/quick",
-                        ]),
+                deps = ["toolchain/quick"]),
 
-
-  # br.CppTest("tests/regex_test",
-  #               srcs = ["tests/regex_test.cpp"],
-  #               deps = ["aparse/regex"]),
-
-  # br.CppTest("tests/aparse_grammar_test",
-  #               srcs = ["tests/aparse_grammar_test.cpp"],
-  #               deps = ["aparse/aparse_grammar"]),
-
-  # br.CppTest("tests/core_parser_test",
-  #               srcs = ["tests/core_parser_test.cpp"],
-  #               deps = ["src/core_parser"]),
-
-  # br.CppTest("tests/core_parser_integration_test",
-  #               srcs = ["tests/core_parser_integration_test.cpp"],
-  #               deps = ["src/core_parser",
-  #                       "src/aparse_machine_builder_v2"]),
+  br.CppTest("src/regex_test",
+                srcs = ["src/regex_test.cpp"],
+                deps = ["aparse/regex"]),
 
   br.CppTest("src/v2/core_parser_integration_test",
                 srcs = ["src/v2/core_parser_integration_test.cpp"],
@@ -252,28 +242,23 @@ configs.dependency_configs = [
   #               srcs = ["src/internal_parser_integration_test.cpp"],
   #               deps = ["aparse/parser"]),
 
-  br.CppTest("src/internal_lexer_integration_test",
-                srcs = ["src/internal_lexer_integration_test.cpp"],
-                deps = ["src/internal_lexer",
+  br.CppTest("src/internal_lexer_builder_integration_test",
+                srcs = ["src/internal_lexer_builder_integration_test.cpp"],
+                deps = ["src/internal_lexer_builder",
                         "toolchain/quick",
                         "aparse/regex",
                         "src/regex_helpers"]),
 
-  br.CppTest("src/advance_lexer_integration_test",
-                srcs = ["src/advance_lexer_integration_test.cpp"],
-                deps = ["aparse/advance_lexer",
+  br.CppTest("src/lexer_builder_integration_test",
+                srcs = ["src/lexer_builder_integration_test.cpp"],
+                deps = ["aparse/lexer_builder",
                         "toolchain/quick"]),
 
   br.CppTest("src/parser_builder_integration_test",
                 srcs = ["src/parser_builder_integration_test.cpp"],
-                deps = ["aparse/advance_lexer",
-                        "aparse/parser_builder",
+                deps = ["aparse/parser_builder",
+                        "aparse/lexer_builder",
                         "toolchain/quick"]),
-
-  # br.CppTest("src/v1/aparse_machine_builder_test",
-  #               srcs = ["src/v1/aparse_machine_builder_test.cpp"],
-  #               deps = ["src/aparse_machine_builder_v2"]),
-
 
   br.CppTest("src/v2/internal_aparse_grammar_test",
                 srcs = ["src/v2/internal_aparse_grammar_test.cpp"],
@@ -299,7 +284,7 @@ configs.dependency_configs = [
 
   br.CppTest("src/internal_parser_builder_integration_test",
                 srcs = ["src/internal_parser_builder_integration_test.cpp"],
-                deps = ["aparse/internal_parser_builder",
+                deps = ["src/internal_parser_builder",
                         "tests/samples/sample_internal_parser_rules"]),
 
   br.CppTest("tests/integration_tests/aparse_test",
@@ -317,10 +302,21 @@ configs.dependency_configs = [
                 deps = ["src/internal_parser",
                         "toolchain/quick"]),
 
+  br.CppLibrary("tools/experiments/try2",
+                ignore_cpplint = True,
+                srcs = ["tools/experiments/try2.cpp"],
+                deps = ["toolchain/quick"]),
+
   br.CppProgram("tools/experiments/try",
                 ignore_cpplint = True,
                 srcs = ["tools/experiments/try.cpp"],
-                deps = ["toolchain/quick"]),
+                deps = ["toolchain/quick",
+                        "tools/experiments/try2"]),
+
+  # br.CppTest("tools/experiments/try_test",
+  #               ignore_cpplint = True,
+  #               srcs = ["tools/experiments/try_test.cpp"],
+  #               deps = ["toolchain/quick"]),
 
   br.CppProgram("tools/experiments/dev",
                 srcs = ["tools/experiments/dev.cpp"],
@@ -328,6 +324,7 @@ configs.dependency_configs = [
                         "src/v2/aparse_machine_builder",
                         "src/regex_builder",
                         "src/parse_regex_rule"],
+                ignore_cpplint = True,
                 local_include_dir = ["."]),
 ];
 

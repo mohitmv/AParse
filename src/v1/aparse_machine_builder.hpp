@@ -168,7 +168,6 @@ class AParseMachineBuilder {
                                             SubDFA& sdfa);  // NOLINT
   void BuildCSR(int csr_index);
   void BackTrackingPreprocess();
-#if _APARSE_DEBUG_FLAG == true
 
  public:
   // This method is declared without implementing. Extrernal user can implement
@@ -190,7 +189,6 @@ class AParseMachineBuilder {
   InternalGrammar igrammar;
   void Step1BuildInternalGrammar();
 
-#endif
 };
 
 

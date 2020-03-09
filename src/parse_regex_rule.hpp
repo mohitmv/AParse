@@ -6,7 +6,13 @@
 
 #include "src/parse_char_regex.hpp"
 
-#include "aparse/internal_lexer.hpp"
+#include <memory>
+#include <unordered_map>
+#include <utility>
+#include <vector>
+#include <string>
+
+#include "aparse/lexer.hpp"
 #include "aparse/parser.hpp"
 
 namespace aparse {
@@ -15,11 +21,11 @@ namespace aparse {
 struct ParsedGrammarRule {
   enum Type {EPSILON, LITERAL, NON_TERMINAL, STRING, UNION, CONCAT, KPLUS,
              KSTAR, RULE, ALL_EXCEPT};
-  ParsedGrammarRule() {};
-  ParsedGrammarRule(Type type): type(type) {}
-  ParsedGrammarRule(const string& value): type(LITERAL),
+  ParsedGrammarRule() = default;
+  explicit ParsedGrammarRule(Type type): type(type) {}
+  explicit ParsedGrammarRule(const string& value): type(LITERAL),
                                           value(value) {}
-  ParsedGrammarRule(string&& value): type(LITERAL),
+  explicit ParsedGrammarRule(string&& value): type(LITERAL),
                                      value(value) {}
   ParsedGrammarRule(Type type, const vector<ParsedGrammarRule>& children)
     : type(type),
@@ -40,9 +46,6 @@ struct ParsedGrammarRule {
 
 
 struct ParseRegexRule {
-  static std::unique_ptr<quick::AbstractType> grammar_regex_lexer;
-  static bool initialized;
-  static bool Init();
   static ParsedGrammarRule Parse(const string& input);
   static bool Parse(const string& input,
                     ParsedGrammarRule* output,
@@ -57,7 +60,6 @@ AParseGrammar StringRulesToAParseGrammar(
     const string& main_non_terminal);
 
 }  // namespace helpers
+}  // namespace aparse
 
-}
-
-#endif //  _APARSE_PARSE_REGEX_RULE_HPP_
+#endif  // _APARSE_PARSE_REGEX_RULE_HPP_

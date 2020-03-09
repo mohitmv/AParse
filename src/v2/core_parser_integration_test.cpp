@@ -81,7 +81,8 @@ TEST_F(CoreParserIntegrationTest, SampleGrammar1Basic) {
   {
     // (((((((((((())))))))))))((()))
     parser.Reset();
-    parser.Feed({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1});
+    parser.Feed({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+                 1, 1, 1, 1, 0, 0, 0, 1, 1, 1});
     CoreParseNode tree;
     parser.Parse(&tree);
     CoreParseNode expected(0, {0, 30},
@@ -97,25 +98,23 @@ TEST_F(CoreParserIntegrationTest, SampleGrammar1Basic) {
                         {CoreParseNode(0, {9, 15},
                           {CoreParseNode(0, {10, 14},
                             {CoreParseNode(0, {11, 13},
-                              {CoreParseNode(0, {12, 12})}
-                             )}
-                           )}
-                         )}
-                       )}
-                     )}
-                   )}
-                 )}
-               )}
-             )}
-           )}
-         ),
+                              {CoreParseNode(0, {12, 12})})
+                           })
+                         })
+                       })
+                     })
+                   })
+                 })
+               })
+             })
+           })
+         }),
          CoreParseNode(0, {25, 29},
           {CoreParseNode(0, {26, 28},
-            {CoreParseNode(0, {27, 27})}
-           )}
-         )}
-       )}
-     );
+            {CoreParseNode(0, {27, 27})})
+          })
+         })
+       });
     EXPECT_EQ(expected, tree);
   }
   {

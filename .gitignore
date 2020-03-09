@@ -6,3 +6,4 @@ build-release/
 __pycache__
 *.pyc
 tools/local_configs.py
+docs/_build

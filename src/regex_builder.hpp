@@ -24,10 +24,10 @@ namespace aparse {
 struct RegexBuilderObject {
   using RegexType = Regex::RegexType;
   RegexBuilderObject() {}
-  RegexBuilderObject(RegexType regex_type): type(regex_type) {}
-  RegexBuilderObject(Alphabet alphabet): type(Regex::ATOMIC),
+  explicit RegexBuilderObject(RegexType regex_type): type(regex_type) {}
+  explicit RegexBuilderObject(Alphabet alphabet): type(Regex::ATOMIC),
                                          alphabet(alphabet) {}
-  RegexBuilderObject(const std::string& a): type(Regex::ATOMIC),
+  explicit RegexBuilderObject(const std::string& a): type(Regex::ATOMIC),
                                             alphabet_string(a) {}
   RegexBuilderObject(RegexType regex_type,
                      const std::vector<RegexBuilderObject>& children)
@@ -38,7 +38,7 @@ struct RegexBuilderObject {
      : type(regex_type),
        children(std::move(children)) {}
 
-  void DebugStream(qk::DebugStream& ds) const;
+  void DebugStream(qk::DebugStream& ds) const;  // NOLINT
 
   RegexBuilderObject& operator+(const RegexBuilderObject& other);
   RegexBuilderObject& operator|(const RegexBuilderObject& other);
@@ -65,7 +65,7 @@ struct RegexBuilderObject {
   // optional field for external identification purpose.
   int label = 0;
 };
-   
+
 }  // namespace aparse
 
 

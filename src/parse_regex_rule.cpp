@@ -3,10 +3,14 @@
 
 #include "src/parse_regex_rule.hpp"
 
+#include <memory>
+#include <algorithm>
+#include <unordered_set>
+
 #include "quick/stl_utils.hpp"
 #include "src/regex_helpers.hpp"
-#include "aparse/internal_parser_builder.hpp"
-#include <memory>
+#include "src/internal_parser_builder.hpp"
+#include "src/internal_lexer_builder.hpp"
 
 namespace aparse {
 
@@ -21,7 +25,7 @@ using helpers::E;
 using helpers::SU;
 using helpers::SC;
 
-struct GrammarRegexLexerScope: public aparse::InternalLexerScopeBase {
+struct GrammarRegexLexerScope: public aparse::LexerScopeBase {
   enum TokenType {NON_TERMINAL, LITERAL, PLUS_SYMBOL, STAR_SYMBOL,
                   QUESTION_MARK, OPEN_B1, STRING, QUESTION_MARK_SYMBOL,
                   CLOSE_B1, OPEN_B3, CLOSE_B3, GROUP_NEGATION_SYMBOL,
@@ -40,30 +44,26 @@ struct RegexRuleParserScope: ParserScopeBase<ParsedGrammarRule> {
   string TokenString(int alphabet_index) const;
 };
 
-using GrammarRegexLexer = InternalLexer<GrammarRegexLexerScope>;
-using GrammarRegexParser = Parser;
-
-unique_ptr<qk::AbstractType> ParseRegexRule::grammar_regex_lexer;
-
-bool BuildGrammarRegexLexer() {
-  using LexerRules = GrammarRegexLexer::LexerRules;
-  using Rule = LexerRules::Rule;
+bool BuildGrammarRegexLexer(Lexer* lexer) {
+  using Rule = aparse::InternalLexerGrammar::Rule;
   using Scope = GrammarRegexLexerScope;
   using TokenType = Scope::TokenType;
-  LexerRules lexer_rules;
+  aparse::InternalLexerGrammar lexer_rules;
   int alphabet_size = 256;
   auto ALL = helpers::AnyAlphabetRegex(alphabet_size);
   auto AE = [&](string s) {
     vector<Alphabet> clist;
-    for (auto c: s) {
+    for (auto c : s) {
       clist.push_back(uchar(c));
     }
     return helpers::AllAlphabetExceptSomeRegex(clist, alphabet_size);
   };
   auto literal = ParseCharRegex::Parse("[a-zA-Z_][a-zA-Z0-9_]*");
   auto non_terminal = ParseCharRegex::Parse("<[a-zA-Z_][a-zA-Z0-9_]*>");
-  auto string_regex_1 = C({A('"'), KS(U({AE("\"\\"), C({A('\\'), ALL})})), A('"')});
-  auto string_regex_2 = C({A('\''), KS(U({AE("\'\\"), C({A('\\'), ALL})})), A('\'')});
+  auto string_regex_1 = C({A('"'),
+                          KS(U({AE("\"\\"), C({A('\\'), ALL})})), A('"')});
+  auto string_regex_2 = C({A('\''), KS(U({AE("\'\\"), C({A('\\'), ALL})})),
+                          A('\'')});
   auto string_regex = U({string_regex_1, string_regex_2});
   lexer_rules.main_section = 0;
   auto lAddTokenAction = [](TokenType type) {
@@ -79,7 +79,7 @@ bool BuildGrammarRegexLexer() {
       Rule(KP(U({A(' '), A('\t'), A('\n')}))),
     }}
   };
-  for (auto& kv: unordered_map<string, TokenType> {
+  for (auto& kv : unordered_map<string, TokenType> {
                 {"(", Scope::OPEN_B1},
                 {")", Scope::CLOSE_B1},
                 {"[", Scope::OPEN_B3},
@@ -95,12 +95,7 @@ bool BuildGrammarRegexLexer() {
     lexer_rules.rules.at(0).push_back(
       Rule(SC(kv.first)).Action(lAddTokenAction(kv.second)));
   }
-  {
-    auto new_lexer = new GrammarRegexLexer();
-    new_lexer->Build(lexer_rules);
-    ParseRegexRule::grammar_regex_lexer.reset(new_lexer);
-  }
-  return true;
+  return InternalLexerBuilder::Build(lexer_rules, lexer);
 }
 
 
@@ -174,14 +169,17 @@ bool BuildGrammarRegexParser(Parser* parser) {
 
     // <atomic_expression> ::=  "(" <main_expression> ")" | <atoms>
     Rule(s("<atomic_expression>"),
-          U({NT("<atoms>"), C({A(LexerScope::OPEN_B1), NT("<main_expression>"), A(LexerScope::CLOSE_B1)})}))
+          U({NT("<atoms>"), C({A(LexerScope::OPEN_B1),
+                               NT("<main_expression>"),
+                               A(LexerScope::CLOSE_B1)})}))
       .Action([](ParserScope* scope, ParsedGrammarRule* output) {
         *output = std::move(scope->Value());
       }),
 
     // <main_expression> ::= (<concat_expression> "|")* <concat_expression>
     Rule(s("<main_expression>"),
-          C({KS(C({NT("<concat_expression>"), A(LexerScope::OR_SYMBOL)})), NT("<concat_expression>")}))
+          C({KS(C({NT("<concat_expression>"),
+                   A(LexerScope::OR_SYMBOL)})), NT("<concat_expression>")}))
       .Action([](ParserScope* scope, ParsedGrammarRule* output) {
         if (scope->ValueList().size() == 1) {
           *output = std::move(scope->ValueList()[0]);
@@ -193,20 +191,22 @@ bool BuildGrammarRegexParser(Parser* parser) {
 
     // <unary_op_expression> ::= <atomic_expression> ("" | "+" | "*" | "?")
     Rule(s("<unary_op_expression>"),
-          C({NT("<atomic_expression>"), U({E(),
-                                           A(LexerScope::PLUS_SYMBOL),
-                                           A(LexerScope::STAR_SYMBOL),
-                                           A(LexerScope::QUESTION_MARK_SYMBOL)})}))
+          C({NT("<atomic_expression>"),
+              U({E(),
+                 A(LexerScope::PLUS_SYMBOL),
+                 A(LexerScope::STAR_SYMBOL),
+                 A(LexerScope::QUESTION_MARK_SYMBOL)})}))
       .Action([](ParserScope* scope, ParsedGrammarRule* output) {
         if (scope->Exists(1)) {
           output->type = ParsedGrammarRule::KPLUS;
           output->children.push_back(std::move(scope->Value()));
-        } else if(scope->Exists(2)) {
+        } else if (scope->Exists(2)) {
           output->type = ParsedGrammarRule::KSTAR;
           output->children.push_back(std::move(scope->Value()));
-        } else if(scope->Exists(3)) {
+        } else if (scope->Exists(3)) {
           output->type = ParsedGrammarRule::UNION;
-          output->children.push_back(ParsedGrammarRule(ParsedGrammarRule::EPSILON));
+          output->children.push_back(
+              ParsedGrammarRule(ParsedGrammarRule::EPSILON));
           output->children.push_back(std::move(scope->Value()));
         } else {
           *output = std::move(scope->Value());
@@ -251,15 +251,7 @@ bool BuildGrammarRegexParser(Parser* parser) {
     rule_actions.push_back(rule.action);
   }
   {
-    InternalParserBuilder parser_builder;
-    parser_builder.Build(grammar, rule_actions, parser);
-  }
-  return true;
-}
-
-bool ParseRegexRule::Init() {
-  if (grammar_regex_lexer == nullptr) {
-    BuildGrammarRegexLexer();
+    InternalParserBuilder::Build(grammar, rule_actions, parser);
   }
   return true;
 }
@@ -276,19 +268,19 @@ ParsedGrammarRule ParseRegexRule::Parse(const string& input) {
 bool ParseRegexRule::Parse(const string& input,
                            ParsedGrammarRule* output,
                            Error* error) {
-  ParseRegexRule::Init();
-  const GrammarRegexLexer& lexer_main =
-      (static_cast<GrammarRegexLexer&>(*grammar_regex_lexer));
   static Parser grammar_regex_parser;
+  static Lexer grammar_regex_lexer;
+  if (not grammar_regex_lexer.IsInitialized()) {
+    BuildGrammarRegexLexer(&grammar_regex_lexer);
+  }
   if (not grammar_regex_parser.IsFinalized()) {
     BuildGrammarRegexParser(&grammar_regex_parser);
   }
-  const Parser& parser_main = grammar_regex_parser;
-  auto lexer = lexer_main.CreateInstance();
-  ParserInstance parser(parser_main);
+  GrammarRegexLexerScope lexer_scope;
+  auto lexer = grammar_regex_lexer.CreateInstance(&lexer_scope);
+  auto parser = grammar_regex_parser.CreateInstance();
   lexer.Reset();
-  lexer.Scope().tokens.clear();
-  for (char c: input) {
+  for (char c : input) {
     if (not lexer.Feed(uchar(c), error)) {
       return false;
     }
@@ -296,9 +288,9 @@ bool ParseRegexRule::Parse(const string& input,
   if (not lexer.End(error)) {
     return false;
   }
-  auto& tokens = lexer.Scope().tokens;
+  auto& tokens = lexer_scope.tokens;
   parser.Reset();
-  for (auto& token: tokens) {
+  for (auto& token : tokens) {
     if (not parser.Feed(token.first, error)) {
       return false;
     }
@@ -323,7 +315,7 @@ string ParsedGrammarRule::DebugString() const {
   std::ostringstream oss;
   std::function<void(const ParsedGrammarRule& input)> lPrint;
   lPrint = [&](const ParsedGrammarRule& input) {
-    oss << "type[" << (int) input.type << "], ";
+    oss << "type[" << static_cast<int>(input.type) << "], ";
     oss << "value[" << input.value << "], ";
     for (int i = 0; i < input.children.size(); i++) {
       oss << "children[" << i << "] = {";
@@ -355,7 +347,7 @@ void ExtractRuleTerminals(const ParsedGrammarRule& input,
     case ParsedGrammarRule::KPLUS:
     case ParsedGrammarRule::KSTAR:
     case ParsedGrammarRule::ALL_EXCEPT:
-      for (auto& item: input.children) {
+      for (auto& item : input.children) {
         ExtractRuleTerminals(item, output);
       }
       break;
@@ -381,7 +373,7 @@ void BuildRegex(const ParsedGrammarRule& input,
     case ParsedGrammarRule::CONCAT:
     case ParsedGrammarRule::KPLUS:
     case ParsedGrammarRule::KSTAR: {
-      switch(input.type) {
+      switch (input.type) {
         case ParsedGrammarRule::UNION:
           output->type = Regex::UNION;
           break;
@@ -411,7 +403,7 @@ void BuildRegex(const ParsedGrammarRule& input,
     case ParsedGrammarRule::ALL_EXCEPT: {
       output->type = Regex::UNION;
       unordered_set<int> excluded_values;
-      for (auto& item: input.children) {
+      for (auto& item : input.children) {
         excluded_values.insert(string_map.at(item.value));
       }
       for (int i = 0; i < alphabet_size; i++) {
@@ -426,7 +418,7 @@ void BuildRegex(const ParsedGrammarRule& input,
   }
 }
 
-}
+}  // namespace helpers
 
 
 AParseGrammar helpers::StringRulesToAParseGrammar(
@@ -451,7 +443,7 @@ AParseGrammar helpers::StringRulesToAParseGrammar(
       case ParsedGrammarRule::KPLUS:
       case ParsedGrammarRule::KSTAR:
       case ParsedGrammarRule::ALL_EXCEPT:
-        for (auto& item: input.children) {
+        for (auto& item : input.children) {
           lExtractTerminals(item);
         }
         break;
@@ -462,14 +454,14 @@ AParseGrammar helpers::StringRulesToAParseGrammar(
     }
   };
   Error error;
-  for (auto& rule_string: rule_strings) {
+  for (auto& rule_string : rule_strings) {
     ParsedGrammarRule rule;
     if (not ParseRegexRule::Parse(rule_string, &rule, &error)) {
       error.Status(Error::PARSER_BUILDER_ERROR_INVALID_RULE)
            .StringValue(string("Rule: ") + rule_string + "\n");
       throw error;
     }
-    _APARSE_DEBUG_ASSERT(rule.type == ParsedGrammarRule::RULE);
+    APARSE_DEBUG_ASSERT(rule.type == ParsedGrammarRule::RULE);
     non_terminals[rule.value];
     lExtractTerminals(rule.children[0]);
     rules.push_back(std::move(rule));
@@ -477,7 +469,7 @@ AParseGrammar helpers::StringRulesToAParseGrammar(
   auto string_map = string_to_alphabet_map;
   if (string_map.size() == 0) {
     int counter = 0;
-    for (auto& item: terminals) {
+    for (auto& item : terminals) {
       auto& s = item.first;
       if (not qk::ContainsKey(non_terminals, s) and
           not qk::ContainsKey(string_map, s)) {
@@ -486,19 +478,20 @@ AParseGrammar helpers::StringRulesToAParseGrammar(
     }
   }
   int max_alphabet = 0;
-  for (auto& item: string_map) {
+  for (auto& item : string_map) {
     max_alphabet = std::max(max_alphabet, item.second);
-    _APARSE_DEBUG_ASSERT(not qk::ContainsKey(non_terminals, item.first));
+    APARSE_DEBUG_ASSERT(not qk::ContainsKey(non_terminals, item.first));
   }
   int index = max_alphabet+1;
-  for (auto& item: non_terminals) {
+  for (auto& item : non_terminals) {
     item.second = ++index;
   }
-  for (auto& item: terminals) {
+  for (auto& item : terminals) {
     if (qk::ContainsKey(string_map, item.first)) {
       item.second = string_map.at(item.first);
     } else {
-      _APARSE_DEBUG_ASSERT(qk::ContainsKey(non_terminals, item.first), item.first);
+      APARSE_DEBUG_ASSERT(qk::ContainsKey(non_terminals, item.first),
+                           item.first);
       item.second = non_terminals[item.first];
     }
   }
@@ -515,7 +508,7 @@ AParseGrammar helpers::StringRulesToAParseGrammar(
       case ParsedGrammarRule::CONCAT:
       case ParsedGrammarRule::KPLUS:
       case ParsedGrammarRule::KSTAR: {
-        switch(input.type) {
+        switch (input.type) {
           case ParsedGrammarRule::UNION:
             output->type = Regex::UNION;
             break;
@@ -542,7 +535,7 @@ AParseGrammar helpers::StringRulesToAParseGrammar(
       case ParsedGrammarRule::ALL_EXCEPT: {
         output->type = Regex::UNION;
         unordered_set<int> excluded_values;
-        for (auto& item: input.children) {
+        for (auto& item : input.children) {
           excluded_values.insert(terminals.at(item.value));
         }
         for (int i = 0; i <= max_alphabet; i++) {
@@ -556,25 +549,22 @@ AParseGrammar helpers::StringRulesToAParseGrammar(
         assert(false);
     }
   };
-  for (auto& rule: rules) {
+  for (auto& rule : rules) {
     Regex regex;
     lBuildRegex(rule.children[0], &regex);
     grammar.rules.push_back(make_pair(non_terminals.at(rule.value), regex));
   }
   grammar.alphabet_size = 1 + max_alphabet;
-  for (auto& item: branching_alphabets) {
-    _APARSE_DEBUG_ASSERT(qk::ContainsKey(string_map, item.first));
-    _APARSE_DEBUG_ASSERT(qk::ContainsKey(string_map, item.second));
+  for (auto& item : branching_alphabets) {
+    APARSE_DEBUG_ASSERT(qk::ContainsKey(string_map, item.first));
+    APARSE_DEBUG_ASSERT(qk::ContainsKey(string_map, item.second));
     grammar.branching_alphabets.push_back(
         make_pair(string_map.at(item.first),
                   string_map.at(item.second)));
   }
-  _APARSE_DEBUG_ASSERT(qk::ContainsKey(non_terminals, main_non_terminal));
+  APARSE_DEBUG_ASSERT(qk::ContainsKey(non_terminals, main_non_terminal));
   grammar.main_non_terminal = non_terminals.at(main_non_terminal);
   return grammar;
 }
 
-
-
 }  // namespace aparse
-

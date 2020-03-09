@@ -40,12 +40,6 @@ struct CoreParseNode {
   string DebugString() const;
 };
 
-// struct CoreParseTree {
-//   CoreParseNode tree;
-//   string DebugString() const;
-//   string DebugString(vector<Alphabet> stream) const;
-// };
-
 
 class CoreParser {
  public:

@@ -34,7 +34,7 @@ TEST(SimpleAParseGrammarBuilderTest, Basic) {
   EXPECT_EQ(2, grammar.main_non_terminal);
   EXPECT_EQ(1, grammar.rules.size());
   EXPECT_EQ(2, grammar.rules.at(0).first);
-  EXPECT_EQ("(( '(' main ')' ))*",
+  EXPECT_EQ("(('(' main ')'))*",
             grammar.rules.at(0).second.DebugString(grammar.alphabet_map));
 }
 

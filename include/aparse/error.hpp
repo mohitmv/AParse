@@ -19,8 +19,7 @@ namespace aparse {
 
 
 struct Error: public std::exception {
-  enum ErrorStatus {SUCCESS, INTERNAL_BUG, 
-
+  enum ErrorStatus {SUCCESS, INTERNAL_BUG,
                     LEXER_BUILDER_ERROR,
                     LEXER_BUILDER_ERROR_INVALID_REGEX,
                     LEXER_BUILDER_ERROR_MUST_HAVE_NON_ZERO_RULES,
@@ -48,6 +47,7 @@ struct Error: public std::exception {
                     PARSER_BUILDER_ERROR_INVALID_RULE,
 
                     INVALID_RULE_ACTION_TYPE,
+                    INVALID_LEXER_RUN_ACTION_TYPE
                   };
   ErrorStatus status = SUCCESS;
   string error_message;

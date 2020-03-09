@@ -4,47 +4,45 @@
 #ifndef _APARSE_LEXER_MACHINE_HPP_
 #define _APARSE_LEXER_MACHINE_HPP_
 
+#include <vector>
+#include <unordered_set>
+#include <unordered_map>
+#include <string>
 
-
-#include "aparse/common_headers.hpp"
+#include "aparse/utils/very_common_headers.hpp"
 
 namespace aparse {
 
 struct LexerMachine {
   struct NFA {
     struct NFAState {
-      unordered_map<Alphabet, unordered_set<int>> edges;
-      int label; // optional field for external identification purpose.
+      std::unordered_map<Alphabet, std::unordered_set<int>> edges;
+      int label;  // optional field for external identification purpose.
     };
-    vector<NFAState> states;
+    std::vector<NFAState> states;
     int start_state;
-    unordered_set<int> final_states;
+    std::unordered_set<int> final_states;
     void DebugString();
   };
 
   struct DFA {
     struct DFAState {
-      unordered_map<Alphabet, int> edges;
-      int label; // optional field for external identification purpose.
+      std::unordered_map<Alphabet, int> edges;
+      int label;  // optional field for external identification purpose.
     };
-    vector<DFAState> states;
+    std::vector<DFAState> states;
     int start_state;
-    unordered_set<int> final_states;
-    string DebugString() const;
+    std::unordered_set<int> final_states;
+    std::string DebugString() const;
   };
   DFA dfa;
-  unordered_map<int, int> section_index;
+  std::unordered_map<int, int> section_index;
   bool initialized = false;
-  string DebugString() const {
+  std::string DebugString() const {
     return dfa.DebugString();
   }
 };
 
-
-
-
 }  // namespace aparse
-
-
 
 #endif  // _APARSE_LEXER_MACHINE_HPP_

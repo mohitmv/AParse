@@ -36,7 +36,7 @@ bool TopologicalSortingInGraph(const SimpleGraph& graph,
 bool IsLiteralName(const std::string& s) {
   for (int i = 0; i < s.size(); i++) {
     unsigned char c = s[i];
-    if (s[i] == '_' or (i == 0 ? std::isalpha(c) : std::isalnum(c))) {
+    if (s[i] == '_' or (i == 0 ? std::isalpha(c) : std::isalnum(c))) {  // NOLINT
       continue;
     }
     return false;

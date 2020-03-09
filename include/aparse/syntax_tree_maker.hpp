@@ -6,6 +6,8 @@
 
 #include <tuple>
 #include <memory>
+#include <utility>
+#include <vector>
 
 #include "quick/stl_utils.hpp"
 
@@ -33,8 +35,8 @@ struct SyntaxTreeMaker {
              const vector<Alphabet>& stream,
              ParserScope* parsing_scope,
              SyntaxTreeNode* output) const {
-    _APARSE_ASSERT(rule_actions.size() > 0);
-    _APARSE_ASSERT(rule_actions.size() == rule_atoms.size());
+    APARSE_ASSERT(rule_actions.size() > 0);
+    APARSE_ASSERT(rule_actions.size() == rule_atoms.size());
     auto& tbc = *parsing_scope->MutableTreeBuildingConstructs();
     std::function<void(const CoreParseNode& node,
                        SyntaxTreeNode* output)> lCreateST;

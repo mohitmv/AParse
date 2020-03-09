@@ -23,7 +23,7 @@ void AParseGrammarIntAssignment(
     std::unordered_map<string, int>* string_map) {
   std::unordered_set<string> symbols;
   std::unordered_set<string> non_terminals;
-  for (auto& rule: string_rules) {
+  for (auto& rule : string_rules) {
     non_terminals.insert(rule.first);
     rule.second.GetSymbols(&symbols);
   }
@@ -38,20 +38,20 @@ void AParseGrammarIntAssignment(
     (*string_map)[t] = counter++;
   }
   grammar->alphabet_size = counter;
-  for (auto& nt: non_terminals) {
+  for (auto& nt : non_terminals) {
     (*string_map)[nt] = counter++;
   }
-  for (auto& rule: string_rules) {
+  for (auto& rule : string_rules) {
     grammar->rules.emplace_back(make_pair(string_map->at(rule.first),
                                           rule.second.BuildRegex(*string_map)));
   }
-  for (auto& item: branching_alphabets) {
+  for (auto& item : branching_alphabets) {
     grammar->branching_alphabets.emplace_back(
         make_pair(string_map->at(item.first),
                   string_map->at(item.second)));
   }
   grammar->main_non_terminal = string_map->at(main_non_terminal);
-  for (auto& item: *string_map) {
+  for (auto& item : *string_map) {
     grammar->alphabet_map.insert(make_pair(item.second, item.first));
   }
 }

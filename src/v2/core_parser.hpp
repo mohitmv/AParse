@@ -7,6 +7,9 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <unordered_map>
+#include <unordered_set>
+#include <tuple>
 
 #include <quick/unordered_set.hpp>
 #include <quick/debug_stream_decl.hpp>
@@ -23,7 +26,7 @@ struct StackFrame {
   using NFAStateSet = qk::unordered_set<NFAState>;
   StackFrame() = default;
   StackFrame(Alphabet a, const NFAStateSet& s): alphabet(a), nfa_states(s) {}
-  void DebugStream(qk::DebugStream& ds) const;
+  void DebugStream(qk::DebugStream& ds) const;  // NOLINT
   Alphabet alphabet;
   NFAStateSet nfa_states;
 };
@@ -34,10 +37,11 @@ struct CurrentState {
   using NFAStateSet = qk::unordered_set<NFAState>;
   template<typename T> using NFAStateMap = qk::unordered_map<NFAState, T>;
   CurrentState() = default;
-  CurrentState(const NFAStateSet& nfa_states): nfa_states(nfa_states) {}
+  explicit CurrentState(const NFAStateSet& nfa_states)
+  : nfa_states(nfa_states) {}
   NFAStateMap<NFAState> NextStatesMap(Alphabet alphabet,
                                       const AParseMachine& machine) const;
-  std::pair<StackOperation::OperationType, 
+  std::pair<StackOperation::OperationType,
             unordered_map<int, NFAState>>
   NextStackOps(Alphabet alphabet, const AParseMachine& machine) const;
   NFAStateMap<std::pair<NFAState, int>> SpecialNextStates(
@@ -46,7 +50,7 @@ struct CurrentState {
       const std::unordered_set<int>& enclosed_non_terminals) const;
 
   bool IsFinal(const AParseMachine& machine) const;
-  void DebugStream(qk::DebugStream& ds) const;
+  void DebugStream(qk::DebugStream& ds) const;  // NOLINT
 
   NFAStateSet nfa_states;
 };
@@ -60,11 +64,6 @@ class CoreParser : public AbstractCoreParser {
   bool Parse(CoreParseNode* output);
   void ParseOrDie(CoreParseNode* output);
   bool Parse(CoreParseNode* output, Error* error);
-  // bool Parse(const vector<Alphabet>& stream, CoreParseNode* output);
-  // void ParseOrDie(const vector<Alphabet>& stream, CoreParseNode* output);
-  // bool Parse(const vector<Alphabet>& stream,
-  //            CoreParseNode* output,
-  //            Error* error);
 
   bool Feed(Alphabet alphabet);
   void FeedOrDie(Alphabet alphabet);
@@ -78,13 +77,12 @@ class CoreParser : public AbstractCoreParser {
   void Reset();
   const vector<Alphabet>& GetStream() const;
   unordered_set<Alphabet> PossibleAlphabets() const;
-  // deprecated
   unordered_set<Alphabet> PossibleAlphabets(int k) const;  // return k only.
-  void DebugStream(qk::DebugStream&) const;
+  void DebugStream(qk::DebugStream&) const;  // NOLINT
   using NFAState = AParseMachine::NFAState;
   template<typename T> using NFAStateMap = qk::unordered_map<NFAState, T>;
   struct BackTracker {
-    void DebugStream(qk::DebugStream& ds) const;
+    void DebugStream(qk::DebugStream& ds) const;  // NOLINT
     // feed_index -> Map(current_states -> their previous state)
     std::unordered_map<int, NFAStateMap<NFAState>> nfa_states_map;
     // This map is stored only for 'POP' stack operations.

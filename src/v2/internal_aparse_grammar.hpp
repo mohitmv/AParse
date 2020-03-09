@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <set>
 
 #include "quick/unordered_map.hpp"
@@ -24,7 +25,7 @@ namespace v2 {
 //  a lot of flexibility in AParseGrammar to make it easy to design. However
 //  these flexibilities can be reduced to non-flexible version of AParseGrammar
 //  by doing some preprocessing.
-// eg: 
+// eg:
 // 1). We allow a single non-terminal to be defined in multiple rules. After
 //     preprocessing step, these non-terminals are combibed into single rule by
 //     joining the corrosponding expressions with UNION operator.

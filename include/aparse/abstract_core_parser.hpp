@@ -7,6 +7,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <unordered_set>
 
 #include <quick/utility.hpp>
 #include <quick/debug_stream_decl.hpp>
@@ -37,7 +38,7 @@ struct CoreParseNode {
          end(range.second),
          children(std::move(children)) {}
   bool operator==(const CoreParseNode& rhs) const;
-  void DebugStream(qk::DebugStream& ds) const;
+  void DebugStream(qk::DebugStream& ds) const;  // NOLINT
 
   int label = 0;
   int start = 0, end = 0;  // start: inclusive, end: exclusive;
@@ -54,30 +55,22 @@ class AbstractCoreParser {
   virtual bool Parse(CoreParseNode* output) = 0;
   virtual void ParseOrDie(CoreParseNode* output) = 0;
   virtual bool Parse(CoreParseNode* output, Error* error) = 0;
-  // virtual bool Parse(const vector<Alphabet>& stream, CoreParseNode* output);
-  // virtual void ParseOrDie(const vector<Alphabet>& stream,
-  //                         CoreParseNode* output);
-  // virtual bool Parse(const vector<Alphabet>& stream,
-  //                    CoreParseNode* output,
-  //                    Error* error);
 
   virtual bool Feed(Alphabet alphabet) = 0;
   virtual void FeedOrDie(Alphabet alphabet) = 0;
   virtual bool Feed(Alphabet alphabet, Error* error) = 0;
-  virtual bool Feed(const vector<Alphabet>& stream) = 0;
-  virtual void FeedOrDie(const vector<Alphabet>& stream) = 0;
-  virtual bool Feed(const vector<Alphabet>& stream, Error* error) = 0;
+  virtual bool Feed(const std::vector<Alphabet>& stream) = 0;
+  virtual void FeedOrDie(const std::vector<Alphabet>& stream) = 0;
+  virtual bool Feed(const std::vector<Alphabet>& stream, Error* error) = 0;
 
   virtual bool CanFeed(Alphabet alphabet) const = 0;
   virtual bool IsFinal() const = 0;
   virtual void Reset() = 0;
-  virtual const vector<Alphabet>& GetStream() const = 0;
-  virtual unordered_set<Alphabet> PossibleAlphabets() const = 0;
-  // deprecated.
-  virtual unordered_set<Alphabet> PossibleAlphabets(int k) const = 0;  // return k only.
+  virtual const std::vector<Alphabet>& GetStream() const = 0;
+  virtual std::unordered_set<Alphabet> PossibleAlphabets() const = 0;
+  virtual std::unordered_set<Alphabet> PossibleAlphabets(int k) const = 0;
 };
 
 }  // namespace aparse
 
 #endif  // _APARSE_CORE_PARSER_HPP_
-

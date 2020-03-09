@@ -44,23 +44,26 @@ TEST_F(ParseRegexRuleTest, Basic) {
     {
       "Json ::= JsonList | JsonDict | STRING ",
       PGRule(PGRule::RULE,
-             {PGRule(PGRule::UNION, {{"JsonList"}, {"JsonDict"}, {"STRING"}})})
+             {PGRule(PGRule::UNION, {PGRule("JsonList"),
+                                     PGRule("JsonDict"),
+                                     PGRule("STRING")})})
         .SetValue("Json")
     },
     {
       "JsonList ::= OPEN_B3 (Json COMMA)* Json CLOSE_B3 ",
       PGRule(PGRule::RULE,
              {PGRule(PGRule::CONCAT,
-                     {{"OPEN_B3"},
+                     {PGRule("OPEN_B3"),
                       PGRule(PGRule::KSTAR,
-                             {PGRule(PGRule::CONCAT, {{"Json"}, {"COMMA"}})}),
-                      {"Json"},
-                      {"CLOSE_B3"}}
-                    )})
+                             {PGRule(PGRule::CONCAT, {PGRule("Json"),
+                                                      PGRule("COMMA")})}),
+                      PGRule("Json"),
+                      PGRule("CLOSE_B3")})
+             })
         .SetValue("JsonList")
     },
   };
-  for (auto& item: parse_pairs) {
+  for (auto& item : parse_pairs) {
     EXPECT_EQ(ParseRegexRule::Parse(item.first), item.second);
   }
 }
@@ -100,7 +103,8 @@ TEST(StringRulesToAParseGrammar, Basic) {
       {"CLOSE_B3", 2},
       {"COMMA", 3},
     };
-    vector<pair<string, string>> branching_alphabets = {{"OPEN_B3", "CLOSE_B3"}};
+    vector<pair<string, string>> branching_alphabets =
+        {{"OPEN_B3", "CLOSE_B3"}};
     string main_non_terminal = "Json";
     try {
       helpers::StringRulesToAParseGrammar(rules,

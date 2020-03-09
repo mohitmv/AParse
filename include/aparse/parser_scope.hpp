@@ -5,6 +5,10 @@
 #define _APARSE_PARSER_SCOPE_HPP_
 
 #include <memory>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+#include <utility>
 
 #include "quick/stl_utils.hpp"
 
@@ -22,13 +26,14 @@ class ParserScopeBase {
     const vector<Alphabet>* rule_atoms_;
     unordered_set<Alphabet> token_list_1;
     vector<Alphabet> token_list_2;
-    unordered_map<int, vector<int>> child_st_list_1; // index in `child_st_list_2` vector.
+    // index in `child_st_list_2` vector.
+    unordered_map<int, vector<int>> child_st_list_1;
     unordered_map<int, vector<SyntaxTreeNode>> child_st_list_1_tmp;
     vector<SyntaxTreeNode> child_st_list_2;
-    unordered_map<int, vector<pair<int,int>>> range_list_1;
+    unordered_map<int, vector<pair<int, int>>> range_list_1;
     unordered_map<int, vector<int>> token_stream_index_map;
     vector<int> token_stream_index_map_2;
-    vector<pair<int,int>> range_list_2;
+    vector<pair<int, int>> range_list_2;
     unordered_map<int, bool> is_terminal;
     pair<int, int> range;
     void Clear() {
@@ -43,7 +48,8 @@ class ParserScopeBase {
       token_stream_index_map_2.clear();
     }
   };
-public:
+
+ public:
   Alphabet GetAlphabet() {
     return tree_building_constructs->token_list_2.at(0);
   }
@@ -60,11 +66,11 @@ public:
   }
   int AlphabetIndex() {
     return AlphabetIndexList()[0];
-  };
+  }
   // Alphabet GetAlphabet(int index) { return rule_atoms_[index]; };
   vector<Alphabet>& GetAlphabetList() {
     return tree_building_constructs->token_list_2;
-  };
+  }
   vector<SyntaxTreeNode>& ValueList() {
     return tree_building_constructs->child_st_list_2;
   }
@@ -108,7 +114,6 @@ public:
   }
   std::unique_ptr<TreeBuildingConstructs> tree_building_constructs;
 };
-
 
 }  // namespace aparse
 

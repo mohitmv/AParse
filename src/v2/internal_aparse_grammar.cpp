@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <unordered_set>
 
 #include <quick/unordered_map.hpp>
 #include <quick/unordered_set.hpp>
@@ -19,7 +20,7 @@ namespace v2 {
 namespace {
 int GetMaxNonTerminal(const AParseGrammar& grammar) {
   int output = 0;
-  for (auto& rule: grammar.rules) {
+  for (auto& rule : grammar.rules) {
     output = std::max(output, rule.first);
   }
   return output;
@@ -109,7 +110,8 @@ void InternalAParseGrammar::ConstructEnclosedNonTerminals(
             if (IsBAStart(child)) {
               b_alphabets.push_back(child.alphabet);
               stack.resize(stack.size() + 1);
-            } else if (b_alphabets.size() > 0 && IsBAEnd(child, b_alphabets.back())) {
+            } else if (b_alphabets.size() > 0 and
+                       IsBAEnd(child, b_alphabets.back())) {
               auto expr_list = std::move(stack.back());
               stack.pop_back();
               Regex s_regex;
@@ -128,7 +130,7 @@ void InternalAParseGrammar::ConstructEnclosedNonTerminals(
       default: assert(false);
     }
   };
-  for (auto& item: *rules_list) {
+  for (auto& item : *rules_list) {
     lConstruct(&item.second);
   }
 }
@@ -164,10 +166,6 @@ void InternalAParseGrammar::Init(const AParseGrammar& grammar) {
   int enclosed_nt_id_counter = GetMaxNonTerminal(grammar) + 1;
   auto rules_list = grammar.rules;
   ConstructEnclosedNonTerminals(&rules_list, &enclosed_nt_id_counter);
-  // qk::unordered_map<std::pair<Alphabet, Regex>, int> enclosed_nt_map;
-  // for (auto& rule: rules_list) {
-  //   ConstructEnclosedNonTerminals(&rule.second, &enclosed_nt_id_counter, &enclosed_nt_map);
-  // }
 
   // Step-3: Assign labels to preserve the rule-number in regex.
   int label_counter = 1;
@@ -180,15 +178,15 @@ void InternalAParseGrammar::Init(const AParseGrammar& grammar) {
     label_map[regex.label] = i;
     target_expr[rule.first].push_back(i);
   }
-  for (auto& item: target_expr) {
+  for (auto& item : target_expr) {
     auto& expr = item.second;
     if (expr.size() == 1) {
       rules[item.first] = std::move(rules_list[expr.at(0)].second);
     } else {
       auto& regex = rules[item.first];
       regex.type = Regex::CONCAT;
-      for (auto e: expr) {
-        regex.children.emplace_back(std::move(rules_list[e].second)); 
+      for (auto e : expr) {
+        regex.children.emplace_back(std::move(rules_list[e].second));
       }
     }
   }
@@ -200,7 +198,7 @@ void InternalAParseGrammar::Init(const AParseGrammar& grammar) {
 
   // Step-5: Compute the dependency_graph and topologically sort the
   //         non-terminals.
-  for (auto& rule: rules) {
+  for (auto& rule : rules) {
     ComputeDependency(rule.second,
                       non_terminals,
                       &dependency_graph[rule.first]);
@@ -211,8 +209,8 @@ void InternalAParseGrammar::Init(const AParseGrammar& grammar) {
                     &topological_sorted_non_terminals,
                     &cycle_path);
   (void)status;
-  _APARSE_DEBUG_ASSERT(status);
-  _APARSE_DEBUG_ASSERT(topological_sorted_non_terminals.size() > 0);
+  APARSE_DEBUG_ASSERT(status);
+  APARSE_DEBUG_ASSERT(topological_sorted_non_terminals.size() > 0);
 
   // Step-6: Misc steps
   main_non_terminal = grammar.main_non_terminal;

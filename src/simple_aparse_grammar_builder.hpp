@@ -42,7 +42,7 @@ class SimpleAParseGrammarBuilder {
     Rule() = default;
     Rule(const std::string& non_terminal,
          const RegexBuilderObject& rbo): non_terminal(non_terminal),
-                                         regex_builder_object(rbo) {};
+                                         regex_builder_object(rbo) {}
     template<typename T>
     Rule& Action(const T& action) {
       this->action = quick::function_type<T>(action);
@@ -59,7 +59,7 @@ class SimpleAParseGrammarBuilder {
   // idempotent ? : NO
   void Build() {
     vector<pair<string, RegexBuilderObject>> string_rules;
-    for (auto& rule: rules) {
+    for (auto& rule : rules) {
       string_rules.push_back(make_pair(rule.non_terminal,
                                        rule.regex_builder_object));
       rule_actions.push_back(rule.action);

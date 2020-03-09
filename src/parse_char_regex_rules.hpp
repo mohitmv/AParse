@@ -4,6 +4,11 @@
 #ifndef _APARSE_PARSE_CHAR_REGEX_RULES_HPP_
 #define _APARSE_PARSE_CHAR_REGEX_RULES_HPP_
 
+#include <string>
+#include <utility>
+#include <unordered_map>
+#include <vector>
+
 #include <quick/stl_utils.hpp>
 
 #include "aparse/utils/any.hpp"
@@ -15,8 +20,8 @@ namespace aparse {
 
 struct String2IntMapping {
   int counter;
-  String2IntMapping(int count_start_offset = 0)
-    : counter(count_start_offset) {};
+  explicit String2IntMapping(int count_start_offset = 0)
+    : counter(count_start_offset) {}
   unordered_map<string, int> s2int_map;
   int operator()(const string& s) {
     if (not qk::ContainsKey(s2int_map, s)) {
@@ -41,4 +46,4 @@ pair<AParseGrammar, vector<utils::any>> CharRegexParserRules();
 
 
 
-#endif //  _APARSE_PARSE_CHAR_REGEX_RULES_HPP_
+#endif  //  _APARSE_PARSE_CHAR_REGEX_RULES_HPP_

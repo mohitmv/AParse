@@ -1,29 +1,30 @@
-#include <aparse/aparse.hpp>
+// Copyright: 2015 Mohit Saini
+// Author: Mohit Saini (mohitsaini1196@gmail.com)
 
 #include <vector>
 #include <utility>
 
 #include "gtest/gtest.h"
+#include <aparse/aparse.hpp>
 
 using std::vector;
 using std::unordered_map;
 using std::pair;
 using std::string;
 
-struct LexerScope : aparse::AdvanceLexerScopeBase {
+struct LexerScope : aparse::LexerScopeBase {
   enum TokenType {S1, S2, S3, MOHIT, SAINI, DOUBLE_CONSTANT, INT_CONSTANT,
                   BOOL_CONSTANT, LITERAL, STRING_CONSTANT, ANNOTATION_NAME};
   using Token = pair<TokenType, pair<int, int>>;
   vector<Token> tokens;
 };
 
-using Lexer = aparse::AdvanceLexer<LexerScope>;
 using TokenType = LexerScope::TokenType;
 using Token = LexerScope::Token;
 
-void BuildLexer(Lexer *lexer) {
-  using Rule = Lexer::Rule;
-  Lexer::LexerRules lexer_rules;
+void BuildLexer(aparse::Lexer *lexer) {
+  using Rule = aparse::LexerGrammar::Rule;
+  aparse::LexerGrammar lexer_rules;
   auto lAdd = [](TokenType token_type) {
     return ([token_type](LexerScope* scope) {
       scope->tokens.emplace_back(Token {token_type, scope->Range()});
@@ -34,7 +35,7 @@ void BuildLexer(Lexer *lexer) {
       {"saini", TokenType::SAINI},
       {"group_aggregated", TokenType::S1}};
   std::vector<Rule> rules;
-  for (auto& item: keywords) {
+  for (auto& item : keywords) {
     rules.emplace_back(
       Rule(item.first).Action(lAdd(item.second)));
   }
@@ -57,11 +58,11 @@ void BuildLexer(Lexer *lexer) {
       .Action(lAdd(TokenType::STRING_CONSTANT)));
   lexer_rules.rules[0] = std::move(rules);
   lexer_rules.main_section = 0;
-  lexer->Build(lexer_rules);
+  aparse::LexerBuilder::Build(lexer_rules, lexer);
 }
 
 TEST(BuildLexerTest, Basic) {
-  Lexer lexer;
+  aparse::Lexer lexer;
   BuildLexer(&lexer);
 }
 

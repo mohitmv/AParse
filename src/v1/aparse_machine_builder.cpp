@@ -480,14 +480,10 @@ AParseMachineBuilder::SubNFA AParseMachineBuilder::ReduceNFA(
     for (auto &item : state.edges) {
       for (auto &item2 : item.second) {
         new_edges[item.first][lNewPos(item2.first)] = item2.second;
-        if (_APARSE_DEBUG_FLAG) {
-          // auto& sop = item2.second.stack_operation;
-          // _APARSE_DEBUG_ASSERT(sop.type == StackOperation::NOOP);
-        }
       }
     }
     state.edges = new_edges;
-    _APARSE_DEBUG_ASSERT(state.special_edges.size() == 0);
+    APARSE_DEBUG_ASSERT(state.special_edges.size() == 0);
   }
   nfa.states.resize(offset);
   nfa.states.insert(nfa.states.end(), new_states.begin(), new_states.end());
@@ -607,7 +603,7 @@ std::unordered_set<int> AParseMachineBuilder::ExtractPseudoAlphabets(
 
 void AParseMachineBuilder::BuildCSR(int csr_index) {
   auto& csr = csr_store.Get(csr_index);
-  _APARSE_DEBUG_ASSERT(csr.pa_set.size() > 0);
+  APARSE_DEBUG_ASSERT(csr.pa_set.size() > 0);
   csr.branch_close_alphabet = igrammar.sub_regex_map[*csr.pa_set.begin()]
                                                       .branch_close_alphabet;
   csr.branch_start_alphabet = igrammar.sub_regex_map[*csr.pa_set.begin()]
@@ -764,7 +760,7 @@ void AParseMachineBuilder::Export(AParseMachine* output_machine) {
 }
 
 string AParseMachineBuilder::CompositeSubRegexStore::DebugString() {
-  _APARSE_DEBUG_ASSERT(false, "Implement this method");
+  APARSE_DEBUG_ASSERT(false, "Implement this method");
   // cout << "Number of CSR = " << csr_list.size() << endl;
   // for (int i = 0; i < csr_list.size(); i++) {
   //   auto& csr = csr_list[i];
@@ -792,7 +788,7 @@ string AParseMachineBuilder::InternalGrammar::DebugString() const {
 
 
 string AParseMachineBuilder::DebugString() const {
-  _APARSE_DEBUG_ASSERT(false, "Implement this method");
+  APARSE_DEBUG_ASSERT(false, "Implement this method");
 
   // // std::ostringstream oss;
   // cout << "NFA's pseudo_edges: " << endl;

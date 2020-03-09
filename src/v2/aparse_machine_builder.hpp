@@ -30,7 +30,7 @@ class AParseMachineBuilder {
       : grammar(grammar) {}
   AParseMachine Build();
   void Build(AParseMachine*);
-  void DebugStream(qk::DebugStream& ds) const;
+  void DebugStream(qk::DebugStream& ds) const;  // NOLINT
 
   using NFAState = AParseMachine::NFAState;
   template<typename T> using NFAStateMap = qk::unordered_map<NFAState, T>;
@@ -45,13 +45,13 @@ class AParseMachineBuilder {
   using RegexRulesMap = std::unordered_map<int, Regex>;
 
   struct SubNFA {
-    void DebugStream(qk::DebugStream& ds) const;
+    void DebugStream(qk::DebugStream& ds) const;  // NOLINT
     NFAState start_state;
     NFAStateMap<ParsingStream> final_states;
   };
 
   struct NFA {
-    void DebugStream(qk::DebugStream& ds) const;
+    void DebugStream(qk::DebugStream& ds) const;  // NOLINT
 
     // Map(source_state -> Map(alphabet -> Map(target_state -> parsing_stream)))
     NFAStateMap<OutgoingEdges> edges;
@@ -75,7 +75,7 @@ class AParseMachineBuilder {
       : nfa_map(dependency_nfa_map),
         rules(rules),
         nfa_instance_map(nfa_instance_map),
-        state_number_counter(state_number_counter) {};
+        state_number_counter(state_number_counter) {}
 
     void Build(const Regex& regex, NFA* output);
 

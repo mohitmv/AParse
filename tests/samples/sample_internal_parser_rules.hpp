@@ -3,6 +3,10 @@
 
 #include <sstream>
 #include <iostream>
+#include <vector>
+#include <string>
+#include <utility>
+
 #include "aparse/parser.hpp"
 #include "src/simple_aparse_grammar_builder.hpp"
 #include "quick/debug.hpp"
@@ -20,15 +24,15 @@ using std::endl;
 struct Grammar1Node {
   std::vector<Grammar1Node> children;
   Grammar1Node() {}
-  Grammar1Node(std::vector<Grammar1Node>&& children)
+  explicit Grammar1Node(std::vector<Grammar1Node>&& children)
     : children(std::move(children)) {}
-  Grammar1Node(const std::vector<Grammar1Node>& children)
+  explicit Grammar1Node(const std::vector<Grammar1Node>& children)
     : children(children) {}
   string DebugString() const {
     std::ostringstream oss;
     std::function<void(const Grammar1Node&)> lDebugString;
     lDebugString = [&](const Grammar1Node& input) {
-      for (auto& child: input.children) {
+      for (auto& child : input.children) {
         oss << "(";
         lDebugString(child);
         oss << ")";
@@ -57,34 +61,6 @@ auto Grammar1() {
   grammar_builder.Build();
   return grammar_builder;
 }
-
-
-// auto Grammar1ParserRules() {
-//   // Language: 
-//   //   main_non_terminal = A
-//   //    A ::= ( '(' A ')' )*
-//   // Accepted strings: "","()", "()()", "(())", "()(())", ....
-//   // Alphabets: (0 : '('), (1: ')')
-//   // NonTerminals = (2: A)
-//   using Grammar = aparse::InternalParserRules<Grammar1Node>;
-//   using ParsingScope = Grammar::ParsingScope;
-//   using Rule = Grammar::Rule;
-//   Grammar grammar;
-//   grammar.alphabet_size = 2;
-//   grammar.branching_alphabets = {{0, 1}};
-//   grammar.main_non_terminal = 2;
-//   grammar.rules = {
-//     Rule(2, Regex(Regex::KSTAR,
-//                   {Regex(Regex::CONCAT,
-//                          {Regex(0),
-//                           Regex(2),
-//                           Regex(1)})}))
-//       .Action([](ParsingScope* scope, Grammar1Node* output) {
-//         output->children = std::move(scope->ValueList());
-//       })
-//   };
-//   return grammar;
-// }
 
 // Json Object
 struct Grammar3Node {
@@ -115,7 +91,7 @@ struct Grammar3Node {
         case LIST: {
           oss << "[";
           bool is_first = true;
-          for (auto& item: node.list_value) {
+          for (auto& item : node.list_value) {
             oss << (is_first ? "": ", ");
             is_first = false;
             lDebugString(item);
@@ -126,7 +102,7 @@ struct Grammar3Node {
         case MAP: {
           oss << "{";
           bool is_first = true;
-          for (auto& item: node.map_value) {
+          for (auto& item : node.map_value) {
             oss << (is_first ? "": ", ");
             is_first = false;
             oss << "STRING: ";
@@ -164,7 +140,7 @@ auto Grammar3() {
   grammar_builder.main_non_terminal = "Json";
   grammar_builder.branching_alphabets = {{"[", "]"}, {"{", "}"}};
   grammar_builder.rules = {
-    Rule("Json", (   R("NUM")
+    Rule("Json", (   R("NUM")  // NOLINT
                   |  R("STRING")
                   |  R("BOOL")
                   |  R("NULL")
@@ -192,7 +168,7 @@ auto Grammar3() {
          ((R("JsonPair") + R(",")).Kstar() + R("JsonPair")).Optional())
       .Action([](ParserScope* scope, Grammar3Node* output) {
         output->type = Grammar3Node::MAP;
-        for (auto& item: scope->ValueList()) {
+        for (auto& item : scope->ValueList()) {
           auto& item2 = *item.map_value.begin();
           output->map_value[std::move(item2.first)] = std::move(item2.second);
         }
@@ -208,9 +184,4 @@ auto Grammar3() {
   return grammar_builder;
 }
 
-
-
 }  // namespace test
-
-
-

@@ -5,42 +5,53 @@
 #define _APARSE_PARSER_BUILDER_HPP_
 
 #include <tuple>
+#include <string>
+#include <vector>
+#include <unordered_map>
+#include <utility>
 
 #include <quick/type_traits/function_type.hpp>
 
-#include "aparse/common_headers.hpp"
-#include "aparse/error.hpp"
+#include "aparse/utils/very_common_headers.hpp"
 #include "aparse/parser.hpp"
-#include "aparse/internal_parser_builder.hpp"
+#include "src/internal_parser_builder.hpp"
 
 namespace aparse {
 
 class ParserGrammar {
  public:
   struct Rule {
-    Rule (const string& rule): rule_string(rule) {}
+    explicit Rule(const std::string& rule): rule_string(rule) {}
     template<typename T>
     Rule& Action(const T& action) {
       this->action = quick::function_type<T>(action);
       return *this;
     }
-    string rule_string;
+    std::string rule_string;
     utils::any action;
   };
-  vector<Rule> rules;
+
+  std::vector<Rule> rules;
   string main_non_terminal;
-  vector<pair<string, string>> branching_alphabets;
-  unordered_map<string, Alphabet> string_to_alphabet_map;
+  std::vector<std::pair<std::string, std::string>> branching_alphabets;
+  std::unordered_map<string, Alphabet> string_to_alphabet_map;
 };
 
 
 class ParserBuilder {
-public:
-  bool Import(const string& serialized_parser,
+ public:
+  static bool Import(const std::string& serialized_parser,
               const ParserGrammar& parser_grammar,
               Parser* parser);
 
-  void Build(const ParserGrammar& parser_grammar, Parser* parser);
+  static void Export(const Parser& parser,
+              const ParserGrammar& parser_grammar,
+              std::string* serialized_parser);
+
+  static std::string Export(const Parser& parser,
+                     const ParserGrammar& parser_grammar);
+
+  static void Build(const ParserGrammar& parser_grammar, Parser* parser);
 };
 
 

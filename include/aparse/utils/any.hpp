@@ -8,8 +8,10 @@
 #define _APARSE_SRC_UTILS_ANY_HPP_
 
 #include <memory>
-#include <quick/utility.hpp>
 #include <type_traits>
+#include <utility>
+
+#include <quick/utility.hpp>
 
 namespace aparse {
 namespace utils {
@@ -20,7 +22,7 @@ struct any {
   template<typename T,
            typename D = std::decay_t<T>,
            std::enable_if_t<!std::is_same<D, any>::value, int> = 0>
-  any(T&& input)
+  any(T&& input)  // NOLINT
   : ptr_(new any_value_type<D>(input)),
     copy_func_(&copy_func_template<D>) {}
 
@@ -74,7 +76,9 @@ struct any {
   template<typename T>
   struct any_value_type: quick::AbstractType {
     template<typename... Args>
-    any_value_type(Args&&... args): value(std::forward<Args>(args)...) {}
+    explicit any_value_type(Args&&... args)
+    : value(std::forward<Args>(args)...) {}
+
     T value;
   };
 

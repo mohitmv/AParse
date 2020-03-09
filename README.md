@@ -30,10 +30,8 @@ AParse is more powerful than other parser generators like Antlr, Bison, Yacc in 
 
 ----------------------------------
 
-## How to use AParse C++
+## Documentation
 
-[AParse C++](docs/README.md)
-
-Look at `tests/advance_parser_integration_test.cpp` for a hello-world parser using AParse.
+[AParse C++](https://aparse.readthedocs.io)
 
 ----------------------------------

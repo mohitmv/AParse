@@ -3,6 +3,9 @@
 
 #include "src/v2/core_parser.hpp"
 
+#include <tuple>
+#include <unordered_set>
+#include <unordered_map>
 #include <sstream>
 
 #include "aparse/error.hpp"
@@ -24,7 +27,7 @@ NFAStateMap<NFAState> CurrentState::NextStatesMap(
   NFAStateMap<NFAState> next_states_map;
   for (auto& s : nfa_states) {
     auto ns = machine.GetNextStates(s, alphabet);
-    for (auto& item: ns) {
+    for (auto& item : ns) {
       next_states_map.emplace(item, s);
     }
   }
@@ -37,11 +40,11 @@ NFAStateMap<NFAState> CurrentState::NextStatesMap(
 //                         2. ent on which this transition is taken))
 NFAStateMap<std::pair<NFAState, int>> CurrentState::SpecialNextStates(
       Alphabet alphabet,
-      const AParseMachine& machine, 
+      const AParseMachine& machine,
       const std::unordered_set<int>& enclosed_non_terminals) const {
   NFAStateMap<std::pair<NFAState, int>> output;
   for (auto& s : nfa_states) {
-    for (auto ent: enclosed_non_terminals) {
+    for (auto ent : enclosed_non_terminals) {
       auto next_states = machine.GetSpecialNextStates(s, alphabet, ent);
       for (auto& s2 : next_states) {
         output[s2] = make_pair(s, ent);
@@ -51,8 +54,7 @@ NFAStateMap<std::pair<NFAState, int>> CurrentState::SpecialNextStates(
   return output;
 }
 
-std::pair<StackOperation::OperationType, 
-          unordered_map<int, NFAState>>
+std::pair<StackOperation::OperationType, unordered_map<int, NFAState>>
 CurrentState::NextStackOps(
       Alphabet alphabet,
       const AParseMachine& machine) const {
@@ -60,7 +62,7 @@ CurrentState::NextStackOps(
   auto op_type = StackOperation::NOP;
   for (auto& s : nfa_states) {
     auto stack_ops = machine.GetNextStackOps(s, alphabet);
-    for (auto& item: stack_ops) {
+    for (auto& item : stack_ops) {
       source_state_map.insert({item.enclosed_non_terminal, s});
       op_type = item.type;
     }
@@ -83,9 +85,9 @@ CoreParser::CoreParser(const qk::AbstractType* machine) {
 
 // Is Idempotent ? : Yes
 void CoreParser::SetAParseMachine(const qk::AbstractType* machine) {
-  _APARSE_ASSERT(machine != nullptr);
+  APARSE_ASSERT(machine != nullptr);
   this->machine = static_cast<const AParseMachine*>(machine);
-  _APARSE_ASSERT(this->machine->initialized);
+  APARSE_ASSERT(this->machine->initialized);
   this->Reset();
 }
 
@@ -105,7 +107,7 @@ unordered_set<Alphabet> CoreParser::PossibleAlphabets(int k) const {
 
 unordered_set<Alphabet> CoreParser::PossibleAlphabets() const {
   unordered_set<Alphabet> output;
-  for (auto& state: current_state.nfa_states) {
+  for (auto& state : current_state.nfa_states) {
     auto alphabets = machine->PossibleAlphabets(state);
     qk::InsertToSet(alphabets, &output);
   }
@@ -120,7 +122,8 @@ void CoreParser::BackTracker::DebugStream(qk::DebugStream& ds) const {
 
 void CoreParser::DebugStream(qk::DebugStream& ds) const {
   ds << "current_state = " << current_state << "\n"
-     << "stack = " << stack << "\n"
+     << "stack = " << stack
+     << "\n"
      << "back_tracker = " << back_tracker << "\n"
      << "is_valid_path_so_far = " << is_valid_path_so_far;
 }
@@ -182,7 +185,7 @@ bool CoreParser::Feed(Alphabet alphabet, Error* error) {
 }
 
 bool CoreParser::CanFeed(Alphabet alphabet) const {
-  _APARSE_ASSERT(false, "ToDo(Mohit): Implement it");
+  APARSE_ASSERT(false, "ToDo(Mohit): Implement it");
 }
 
 bool CoreParser::Feed(Alphabet alphabet) {
@@ -196,8 +199,8 @@ bool CoreParser::Feed(Alphabet alphabet) {
       current_state.nfa_states.insert(
           machine->enclosed_subnfa_map.at(x.first).start_state);
     }
-  } else if(stack_op.first == StackOperation::POP) {
-    _APARSE_DEBUG_ASSERT(stack.size() > 0);
+  } else if (stack_op.first == StackOperation::POP) {
+    APARSE_DEBUG_ASSERT(stack.size() > 0);
     auto& stack_frame = stack.back();
     std::unordered_set<int> enclosed_non_terminals;
     qk::STLGetKeys(stack_op.second, &enclosed_non_terminals);
@@ -207,9 +210,10 @@ bool CoreParser::Feed(Alphabet alphabet) {
                                                  enclosed_non_terminals);
     auto& back_track_info = back_tracker.pull_op_map[feed_index];
     for (auto& item : next_states_map) {
-      back_track_info[item.first] = make_tuple(item.second.first,
-                                               item.second.second,
-                                               stack_op.second.at(item.second.second));
+      back_track_info[item.first] =
+          make_tuple(item.second.first,
+          item.second.second,
+          stack_op.second.at(item.second.second));
     }
     current_state.nfa_states.clear();
     qk::STLGetKeys(next_states_map, &current_state.nfa_states);
@@ -265,15 +269,15 @@ void ConstructTree(const vector<ParsingStream>& parsing_stream,
         branching_stack.back()->children.push_back(
                                             CoreParseNode({ps.second, i}));
         branching_stack.push_back(&branching_stack.back()->children.back());
-      } else { // ps.first == BRANCH_END_MARKER
+      } else {  // ps.first == BRANCH_END_MARKER
         branching_stack.back()->end = i;
         branching_stack.pop_back();
-        _APARSE_DEBUG_ASSERT(branching_stack.size() > 0);
+        APARSE_DEBUG_ASSERT(branching_stack.size() > 0);
       }
     }
   }
-  _APARSE_DEBUG_ASSERT(branching_stack.size() == 1);
-  _APARSE_DEBUG_ASSERT(output->children.size() > 0);
+  APARSE_DEBUG_ASSERT(branching_stack.size() == 1);
+  APARSE_DEBUG_ASSERT(output->children.size() > 0);
 }
 
 }  // namespace
@@ -312,9 +316,11 @@ bool CoreParser::Parse(CoreParseNode* output) {
       }
       case StackOperation::POP: {
         auto& tmp = back_tracker.pull_op_map.at(i).at(cur);
-        construction_stack.push_back(make_tuple(std::get<0>(tmp), std::get<1>(tmp), cur));
+        construction_stack.push_back(make_tuple(std::get<0>(tmp),
+                                                std::get<1>(tmp), cur));
         cur = std::get<2>(tmp);
-        parsing_stream[i] = machine->enclosed_subnfa_map.at(std::get<1>(tmp)).final_states.at(cur);
+        parsing_stream[i] = machine->enclosed_subnfa_map.at(
+                                    std::get<1>(tmp)).final_states.at(cur);
         break;
       }
       case StackOperation::NOP: {
@@ -333,7 +339,5 @@ bool CoreParser::Parse(CoreParseNode* output) {
   return true;
 }
 
-
 }  // namespace v2
 }  // namespace aparse
-

@@ -17,12 +17,16 @@
 
 namespace aparse {
 using std::string;
+using std::unordered_set;
 
 namespace {
 
+
+// This method is deprecated. Use utils::TopologicalSortingInGraph instead.
 // @graph is a map from node -> set of outgoing nodes.
 // returns true if there is no cycle.
-bool CycleDetectionInGraph(std::unordered_map<int, std::unordered_set<int>> graph) {
+bool CycleDetectionInGraph(std::unordered_map<int,
+                                              unordered_set<int>> graph) {
   std::unordered_set<int> visited;
   std::unordered_set<int> tested;
   // returns true if there is no cycle.

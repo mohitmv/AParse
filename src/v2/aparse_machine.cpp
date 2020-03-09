@@ -280,7 +280,7 @@ void AParseMachine::GetNextStates(const NFAState& s,
                                   Alphabet a,
                                   qk::unordered_set<NFAState>* output) const {
   auto edges_list = GetOutgoingEdgesList(s);
-  for (auto& item: edges_list) {
+  for (auto& item : edges_list) {
     auto& edges = *item.second;
     if (qk::ContainsKey(edges, a)) {
       auto& tmp = edges.at(a);
@@ -326,7 +326,7 @@ void AParseMachine::GetSpecialNextStates(
       int e_non_termimal,
       qk::unordered_set<NFAState>* output) const {
   auto edges_list = GetSpecialOutgoingEdgesList(s);
-  for (auto& item: edges_list) {
+  for (auto& item : edges_list) {
     auto& edges = *item.second;
     if (qk::ContainsKey(edges, a) &&
         qk::ContainsKey(edges.at(a), e_non_termimal)) {
@@ -343,7 +343,7 @@ void AParseMachine::GetParsingStream(const NFAState& source,
                                      const NFAState& target,
                                      ParsingStream* output) const {
   auto edges_list = GetOutgoingEdgesList(source);
-  for (auto& item: edges_list) {
+  for (auto& item : edges_list) {
     if (item.first > target.GetFullPathSize()) {
       break;
     }
@@ -363,7 +363,7 @@ void AParseMachine::GetSpecialParsingStream(const NFAState& source,
                                             const NFAState& target,
                                             ParsingStream* output) const {
   auto edges_list = GetSpecialOutgoingEdgesList(source);
-  for (auto& item: edges_list) {
+  for (auto& item : edges_list) {
     auto& edges = *item.second;
     if (item.first > target.GetFullPathSize()) {
       break;

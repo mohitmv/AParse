@@ -4,11 +4,16 @@
 #ifndef _APARSE_SRC_UTILS_HPP_
 #define _APARSE_SRC_UTILS_HPP_
 
-#include "aparse/common_headers.hpp"
 #include <functional>
 #include <sstream>
+#include <unordered_set>
+#include <unordered_map>
+#include <vector>
+#include <string>
 
 #include <quick/stl_utils.hpp>
+
+#include "aparse/common_headers.hpp"
 
 namespace aparse {
 using quick::ContainsKey;
@@ -25,14 +30,14 @@ bool TopologicalSortingInGraph(const SimpleGraph& graph,
 // ToDo(Mohit): This is ridiculous design. Improve it !
 template<typename NodeType, typename LChildren, typename LValue>
 string PrintPrettyTree(const NodeType* node,
-                       LChildren& children,
-                       LValue& value) {
+                       LChildren& children,  // NOLINT
+                       LValue& value) {  // NOLINT
   std::ostringstream oss;
   int hspace = 5;
   int vspace = 3;
   auto lRepeatedString = [&](string a, int times) {
     string output = "";
-    for (int i=0; i<times; i++) {
+    for (int i = 0; i < times; i++) {
       output += a;
     }
     return output;
@@ -41,16 +46,16 @@ string PrintPrettyTree(const NodeType* node,
                                 [&](const NodeType* node, int depth) {
     for (int j=0; j < vspace; j++) {
       for (int i=0; i < depth; i++) {
-        oss << lRepeatedString(" ", i==0 ? 2: hspace) << "|";
+        oss << lRepeatedString(" ", i == 0 ? 2 : hspace) << "|";
       }
       if (j == vspace-1) {
-        oss << lRepeatedString("-", (depth==0 ? 2:hspace)+0)
+        oss << lRepeatedString("-", (depth == 0 ? 2 : hspace) + 0)
             << value(node);
       }
       oss << "\n";
     }
-    for (auto& child: children(node)) {
-      lPrint(child, depth+1);
+    for (auto& child : children(node)) {
+      lPrint(child, depth + 1);
     }
   };
   lPrint(node, 0);

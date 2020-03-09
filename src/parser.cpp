@@ -70,16 +70,16 @@ ParserInstance::ParserInstance(const Parser& parser) {
 }
 
 void ParserInstance::Init(const Parser& parser) {
-  _APARSE_ASSERT(parser.IsFinalized());
+  APARSE_ASSERT(parser.IsFinalized());
   core_parser.reset(new aparse::v2::CoreParser(parser.machine.get()));
   syntax_tree_maker = parser.syntax_tree_maker.get();
 }
 
 bool Parser::Finalize() {
-  _APARSE_ASSERT(machine != nullptr);
-  _APARSE_ASSERT(rule_actions.size() > 0);
-  _APARSE_ASSERT(rule_actions.size() == rule_atoms.size());
-  _APARSE_ASSERT(rule_actions.size() == rule_non_terminals.size());
+  APARSE_ASSERT(machine != nullptr);
+  APARSE_ASSERT(rule_actions.size() > 0);
+  APARSE_ASSERT(rule_actions.size() == rule_atoms.size());
+  APARSE_ASSERT(rule_actions.size() == rule_non_terminals.size());
   syntax_tree_maker.reset(new SyntaxTreeMaker(rule_actions,
                                               rule_atoms,
                                               rule_non_terminals));

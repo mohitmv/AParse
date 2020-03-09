@@ -6,6 +6,9 @@
 #include <algorithm>
 #include <functional>
 #include <queue>
+#include <unordered_set>
+#include <unordered_map>
+#include <vector>
 
 #include <quick/unordered_map.hpp>
 #include <quick/unordered_set.hpp>
@@ -32,7 +35,7 @@ void SubNFA::DebugStream(qk::DebugStream& ds) const {
   ds << "start_state = " << start_state << "\n"
      << "final_states = " << final_states;
 }
- 
+
 AParseMachine AParseMachineBuilder::Build() {
   AParseMachine output;
   Build(&output);
@@ -50,9 +53,10 @@ void NFABuilder::GetOutgoingEdges(const NFAState& state,
     auto& tmp = nfa_map.at(p[i].first).edges;
     if (qk::ContainsKey(tmp, state_id)) {
       const auto& outgoing_edges = tmp.at(state_id);
-      for (auto& item: outgoing_edges) {
-        for (auto& item2: item.second) {
-          (*output)[item.first][item2.first.AddPrefixFromOther(state, i+1)] = item2.second;
+      for (auto& item : outgoing_edges) {
+        for (auto& item2 : item.second) {
+          (*output)[item.first][item2.first.AddPrefixFromOther(state, i+1)]
+                     = item2.second;
         }
       }
     }
@@ -65,8 +69,8 @@ void NFABuilder::AddEdges(const NFAState& state,
   OutgoingEdges o;
   GetOutgoingEdges(state, &o);
   auto& new_edges = nfa.edges[new_state];
-  for (auto& item: o) {
-    for (auto& item2: item.second) {
+  for (auto& item : o) {
+    for (auto& item2 : item.second) {
       if (item2.first.IsLocal()) {
         nfa.local_incoming_edges[item2.first][item.first].insert(new_state);
       }
@@ -87,8 +91,9 @@ void NFABuilder::GetNFAInstance(int non_terminal, SubNFA* output) {
   int instance_id = (*nfa_instance_map)[non_terminal]++;
   auto& nfa = nfa_map.at(non_terminal);
   output->start_state = nfa.start_state.AddPrefix(non_terminal, instance_id);
-  for (auto& item: nfa.final_states) {
-    output->final_states[item.first.AddPrefix(non_terminal, instance_id)] = item.second;
+  for (auto& item : nfa.final_states) {
+    output->final_states[item.first.AddPrefix(non_terminal, instance_id)]
+                 = item.second;
   }
 }
 
@@ -98,7 +103,7 @@ void NFABuilder::BuildEpsilonSubNFA(const Regex& regex, SubNFA* output) {
 }
 
 void NFABuilder::BuildAtomicSubNFA(const Regex& regex, SubNFA* output) {
-  if (qk::ContainsKey(rules, regex.alphabet)) { // non-terminals
+  if (qk::ContainsKey(rules, regex.alphabet)) {  // non-terminals
     int non_terminal = regex.alphabet;
     if (rules.at(non_terminal).type == Regex::ATOMIC) {
       BuildSubNFA(rules.at(non_terminal), output);
@@ -109,7 +114,8 @@ void NFABuilder::BuildAtomicSubNFA(const Regex& regex, SubNFA* output) {
     output->start_state = NFAState((*state_number_counter)++);
     auto final_state = NFAState((*state_number_counter)++);
     nfa.edges[output->start_state][regex.alphabet][final_state];
-    nfa.local_incoming_edges[final_state][regex.alphabet].insert(output->start_state);
+    nfa.local_incoming_edges[final_state][regex.alphabet]
+                                  .insert(output->start_state);
     output->final_states[final_state];
   }
 }
@@ -117,7 +123,7 @@ void NFABuilder::BuildAtomicSubNFA(const Regex& regex, SubNFA* output) {
 void NFABuilder::BuildUnionSubNFA(const Regex& regex, SubNFA* output) {
   output->start_state = NFAState((*state_number_counter)++);
   bool is_start_state_also_final = false;
-  for (auto& child: regex.children) {
+  for (auto& child : regex.children) {
     SubNFA snfa = BuildSubNFA(child);
     qk::InsertToMap(snfa.final_states, &output->final_states);
     AddEdges(snfa.start_state, ParsingStream(), output->start_state);
@@ -138,12 +144,12 @@ void NFABuilder::BuildConcatSubNFA(const Regex& regex, SubNFA* output) {
     if (i == 0) {
       output->start_state = snfa.start_state;
     } else {
-      for (auto& fs: previous_final_states) {
+      for (auto& fs : previous_final_states) {
         AddEdges(snfa.start_state, fs.second, fs.first);
       }
     }
-    if (i>0 && ContainsKey(snfa.final_states, snfa.start_state)) {
-      for (auto& fs: previous_final_states) {
+    if (i > 0 && ContainsKey(snfa.final_states, snfa.start_state)) {
+      for (auto& fs : previous_final_states) {
         qk::InsertToVector(snfa.final_states[snfa.start_state],
                            &fs.second);
       }
@@ -160,7 +166,7 @@ void NFABuilder::BuildKstarKPlusSubNFA(const Regex& regex, SubNFA* output) {
   output->start_state = NFAState((*state_number_counter)++);
   SubNFA snfa = BuildSubNFA(regex.children[0]);
   output->final_states = snfa.final_states;
-  for (auto fs: snfa.final_states) {
+  for (auto fs : snfa.final_states) {
     AddEdges(snfa.start_state, fs.second, fs.first);
   }
   AddEdges(snfa.start_state, ParsingStream(), output->start_state);
@@ -183,13 +189,13 @@ void NFABuilder::WrapWithParsingStream(int label, SubNFA* snfa) {
     snfa->start_state = new_start_state;
   }
 
-  for (auto& item: snfa->final_states) {
+  for (auto& item : snfa->final_states) {
     item.second.push_back(
       make_pair(AParseMachine::BRANCH_END_MARKER, label));
   }
   if (qk::ContainsKey(nfa.edges, snfa->start_state)) {
-    for (auto& edge: nfa.edges.at(snfa->start_state)) {
-      for (auto& item2: edge.second) {
+    for (auto& edge : nfa.edges.at(snfa->start_state)) {
+      for (auto& item2 : edge.second) {
         item2.second.push_front(
           make_pair(AParseMachine::BRANCH_START_MARKER, label));
       }
@@ -207,7 +213,7 @@ void NFABuilder::MergeEquivalentFinalState(SubNFA* snfa) {
   qk::unordered_map<ParsingStream, vector<NFAState>> local_final_states;
   for (auto& item : snfa->final_states) {
     auto& fs = item.first;
-    if (fs.IsLocal() and (not qk::ContainsKey(nfa.edges, fs))) {
+    if (fs.IsLocal() and not(qk::ContainsKey(nfa.edges, fs))) {
       local_final_states[item.second].push_back(fs);
     }
   }
@@ -247,7 +253,7 @@ SubNFA NFABuilder::BuildSubNFA(const Regex& regex) {
 }
 
 void NFABuilder::BuildSubNFA(const Regex& regex, SubNFA* output) {
-  switch(regex.type) {
+  switch (regex.type) {
     case Regex::EPSILON: {
       BuildEpsilonSubNFA(regex, output);
       break;
@@ -295,8 +301,8 @@ void NFABuilder::RemoveUnreachableStates() {
     auto f = q.front();
     q.pop();
     if (qk::ContainsKey(nfa.edges, f)) {
-      for (auto& item: nfa.edges.at(f)) {
-        for (auto& item2: item.second) {
+      for (auto& item : nfa.edges.at(f)) {
+        for (auto& item2 : item.second) {
           auto target = item2.first;
           if (target.IsLocal()) {
             if (not qk::ContainsKey(pushed_states, target)) {
@@ -308,7 +314,7 @@ void NFABuilder::RemoveUnreachableStates() {
             if (not qk::ContainsKey(pushed_instances, instance)) {
               pushed_instances.insert(instance);
               if (qk::ContainsKey(instances_sources, instance)) {
-                for (auto& item3: instances_sources.at(instance)) {
+                for (auto& item3 : instances_sources.at(instance)) {
                   pushed_states.insert(item3);
                   q.push(item3);
                 }
@@ -320,13 +326,13 @@ void NFABuilder::RemoveUnreachableStates() {
     }
   }
   vector<NFAState> to_delete;
-  for (auto& item: nfa.edges) {
+  for (auto& item : nfa.edges) {
     auto& source = item.first;
     if (not qk::ContainsKey(pushed_states, source)) {
       to_delete.push_back(source);
     }
   }
-  for (auto& source: to_delete) {
+  for (auto& source : to_delete) {
     nfa.edges.erase(source);
     nfa.final_states.erase(source);
   }
@@ -334,7 +340,7 @@ void NFABuilder::RemoveUnreachableStates() {
 
 void AParseMachineBuilder::BuildNFAs() {
   int state_number_counter = 0;
-  for (auto nt: igrammar.topological_sorted_non_terminals) {
+  for (auto nt : igrammar.topological_sorted_non_terminals) {
     if (nt == igrammar.main_non_terminal or
         igrammar.rules.at(nt).type != Regex::ATOMIC) {
       NFABuilder builder(nfa_map,
@@ -344,7 +350,7 @@ void AParseMachineBuilder::BuildNFAs() {
       builder.Build(igrammar.rules.at(nt), &nfa_map[nt]);
     }
   }
-  for (auto ent: igrammar.enclosed_non_terminals) {
+  for (auto ent : igrammar.enclosed_non_terminals) {
     NFABuilder builder(nfa_map,
                        igrammar.rules,
                        &nfa_instance_map,
@@ -366,9 +372,9 @@ void ExportParsingStreamMap(
     const InternalAParseGrammar& igrammar,
     const NFAStateMap<ParsingStream>& targets,
     NFAStateMap<AParseMachine::ParsingStream>* output) {
-  for (auto& item: targets) {
+  for (auto& item : targets) {
     auto& ps = (*output)[item.first];
-    for (auto& item2: item.second) {
+    for (auto& item2 : item.second) {
       auto& label_map = igrammar.regex_label_to_original_rule_number_mapping;
       auto rule_number = label_map.at(item2.second);
       ps.emplace_back(make_pair(item2.first, rule_number));
@@ -379,9 +385,9 @@ void ExportParsingStreamMap(
 void ExportOutgoingEdges(const InternalAParseGrammar& igrammar,
                          const NFAStateMap<OutgoingEdges>& input,
                          NFAStateMap<AParseMachine::OutgoingEdges>* output) {
-  for (auto& edge_item: input) {
+  for (auto& edge_item : input) {
     const NFAState& source_state = edge_item.first;
-    for (auto& item: edge_item.second) {
+    for (auto& item : edge_item.second) {
       Alphabet a = item.first;
       auto& target_states = item.second;
       ExportParsingStreamMap(igrammar,
@@ -394,12 +400,12 @@ void ExportOutgoingEdges(const InternalAParseGrammar& igrammar,
 }  // namespace
 
 void AParseMachineBuilder::AddStackOperations() {
-  for (auto& nfa_item: nfa_map) {
+  for (auto& nfa_item : nfa_map) {
     auto& nfa = nfa_item.second;
-    for (auto& edge_item: nfa.edges) {
+    for (auto& edge_item : nfa.edges) {
       const NFAState& source_state = edge_item.first;
       std::unordered_set<int> ent_edges;
-      for (auto& item: edge_item.second) {
+      for (auto& item : edge_item.second) {
         Alphabet a = item.first;
         if (qk::ContainsKey(igrammar.enclosed_non_terminals, a)) {
           Alphabet ba = igrammar.enclosed_ba_alphabet.at(a);
@@ -415,11 +421,11 @@ void AParseMachineBuilder::AddStackOperations() {
       }
     }
   }
-  for (auto& ent: igrammar.enclosed_non_terminals) {
+  for (auto& ent : igrammar.enclosed_non_terminals) {
     auto& e_nfa = nfa_map.at(ent);
     Alphabet ba = igrammar.enclosed_ba_alphabet.at(ent);
     Alphabet closing_ba = igrammar.ba_map.at(ba);
-    for (auto& item2: e_nfa.final_states) {
+    for (auto& item2 : e_nfa.final_states) {
       e_nfa.special_edges[item2.first][closing_ba][ent].first =
                 {StackOperation::POP, ent};
     }
@@ -428,14 +434,14 @@ void AParseMachineBuilder::AddStackOperations() {
 
 void AParseMachineBuilder::ExportToAParseMachine(AParseMachine* output) const {
   auto lExportToNFALookupMap = [&](const NFA& nfa, int non_terminal) {
-    for (auto& item: nfa.edges) {
+    for (auto& item : nfa.edges) {
       output->nfa_lookup_map[item.first] = non_terminal;
     }
-    for (auto& item: nfa.special_edges) {
+    for (auto& item : nfa.special_edges) {
       output->nfa_lookup_map[item.first] = non_terminal;
     }
   };
-  for (auto& item: nfa_map) {
+  for (auto& item : nfa_map) {
     auto nt = item.first;
     auto& nfa = item.second;
     auto& output_nfa = output->nfa_map[nt];

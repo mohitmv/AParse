@@ -1,6 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
+#include <unordered_set>
+
 #include <quick/stl_utils.hpp>
 
 #include "src/parse_char_regex_rules.hpp"
@@ -28,7 +30,7 @@ pair<AParseGrammar, vector<utils::any>> CharRegexParserRules() {
   auto ALL = helpers::AnyAlphabetRegex(grammar.alphabet_size);
   auto AE = [&](string s) {
     vector<Alphabet> clist;
-    for (auto c: s) {
+    for (auto c : s) {
       clist.push_back(uchar(c));
     }
     return helpers::AllAlphabetExceptSomeRegex(clist, grammar.alphabet_size);
@@ -94,9 +96,9 @@ pair<AParseGrammar, vector<utils::any>> CharRegexParserRules() {
         output->type = Regex::UNION;
         int rs = scope->ValueList()[0].alphabet;
         int re = scope->ValueList()[1].alphabet;
-        _APARSE_DEBUG_ASSERT(rs <= re, "Invalid Range: (" << rs << ":"
+        APARSE_DEBUG_ASSERT(rs <= re, "Invalid Range: (" << rs << ":"
                                                           << re << ")");
-        for (int i=rs; i<=re; i++) {
+        for (int i = rs; i <= re; i++) {
           output->children.push_back(Regex(i));
         }
       }),
@@ -115,7 +117,7 @@ pair<AParseGrammar, vector<utils::any>> CharRegexParserRules() {
         if (scope->Exists(1)) {
           output->type = Regex::UNION;
           unordered_set<Alphabet> r_set;
-          for (auto& item: scope->ValueList()) {
+          for (auto& item : scope->ValueList()) {
             r_set.insert(item.alphabet);
           }
           for (int i=0; i < alphabet_size; i++) {
@@ -135,14 +137,20 @@ pair<AParseGrammar, vector<utils::any>> CharRegexParserRules() {
 
     // <atomic_expression> ::=  "(" <main> ")" | <atomic_char> | <char_union>
     Rule(s("<atomic_expression>"),
-         U({C({A('('), NT("<main>"), A(')')}), NT("<atomic_char>"), NT("<char_union>")}))
+         U({C({A('('),
+               NT("<main>"),
+               A(')')}),
+            NT("<atomic_char>"),
+            NT("<char_union>")}))
       .Action([](ParsingScope* scope, Regex* output) {
         *output = std::move(scope->Value());
       }),
 
     // <main> ::= (<concat_expression> "|")* <concat_expression>
     Rule(s("<main>"),
-         C({KS(C({NT("<concat_expression>"), A('|')})), NT("<concat_expression>")}))
+         C({KS(C({NT("<concat_expression>"),
+                  A('|')})),
+            NT("<concat_expression>")}))
       .Action([](ParsingScope* scope, Regex* output) {
         if (scope->ValueList().size() == 1) {
           *output = std::move(scope->ValueList()[0]);
@@ -159,10 +167,10 @@ pair<AParseGrammar, vector<utils::any>> CharRegexParserRules() {
         if (scope->Exists(1)) {
           output->type = Regex::KPLUS;
           output->children.push_back(std::move(scope->Value()));
-        } else if(scope->Exists(2)) {
+        } else if (scope->Exists(2)) {
           output->type = Regex::KSTAR;
           output->children.push_back(std::move(scope->Value()));
-        } else if(scope->Exists(3)) {
+        } else if (scope->Exists(3)) {
           output->type = Regex::UNION;
           output->children.push_back(Regex(Regex::EPSILON));
           output->children.push_back(std::move(scope->Value()));
@@ -191,6 +199,4 @@ pair<AParseGrammar, vector<utils::any>> CharRegexParserRules() {
 }
 
 
-}
-
-
+}  // namespace aparse

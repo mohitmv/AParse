@@ -43,7 +43,7 @@ unordered_set<Alphabet> GetRegexAtoms(const Regex& r) {
 }
 
 Regex RangeRegex(Alphabet a, Alphabet b) {
-  _APARSE_ASSERT(a < b);
+  APARSE_ASSERT(a < b);
   Regex output(Regex::UNION);
   for (int i = a; i < b; i++) {
     output.children.emplace_back(i);
@@ -60,23 +60,24 @@ Regex AllAlphabetExceptSomeRegex(const vector<Alphabet>& input,
       output.children.emplace_back(i);
     }
   }
-  _APARSE_ASSERT(output.children.size() >= 2);
+  APARSE_ASSERT(output.children.size() >= 2);
   return output;
 }
 
 Regex SU(const string& s) {
   Regex output(Regex::UNION);
-  for (auto c: s) {
+  for (auto c : s) {
     output.children.emplace_back(Regex(static_cast<unsigned char>(c)));
   }
   return output;
 }
 
 Regex SC(const string& s) {
-  if (s.size() == 1) { return A(s[0]);}
-  else {
+  if (s.size() == 1) {
+    return A(s[0]);
+  } else {
     Regex output(Regex::CONCAT);
-    for (auto c: s) {
+    for (auto c : s) {
       output.children.emplace_back(static_cast<unsigned char>(c));
     }
     return output;

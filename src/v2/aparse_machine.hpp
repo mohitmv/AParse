@@ -28,11 +28,11 @@ namespace v2 {
 struct AParseMachine : public quick::AbstractType {
   struct NFAState {
     NFAState() {}
-    NFAState(int number): number(number) {}
+    explicit NFAState(int number): number(number) {}
     std::string DebugString() const;
     std::size_t GetHash() const;
-    void Serialize(quick::OByteStream&) const;
-    void Deserialize(quick::IByteStream&);
+    void Serialize(quick::OByteStream&) const;  // NOLINT
+    void Deserialize(quick::IByteStream&);  // NOLINT
     bool operator==(const NFAState& other) const;
     bool operator!=(const NFAState& other) const;
     NFAState AddPrefix(int non_terminal, int nfa_id) const;
@@ -48,6 +48,7 @@ struct AParseMachine : public quick::AbstractType {
     inline int GetNumber() const {return number;}
     int GetFullPathSize() const;
     bool IsLocal() const;
+
    private:
     int number;
     // vector<pair<(non-terminal, instance-id)>>
@@ -98,18 +99,18 @@ struct AParseMachine : public quick::AbstractType {
   struct NFA {
     bool operator==(const NFA& other) const;
     void Serialize(quick::OByteStream&) const;
-    void Deserialize(quick::IByteStream&);
+    void Deserialize(quick::IByteStream&);  // NOLINT
 
-    void DebugStream(qk::DebugStream& ds) const;
+    void DebugStream(qk::DebugStream& ds) const;  // NOLINT
 
     NFAStateMap<OutgoingEdges> edges;
     NFAStateMap<SpecialOutgoingEdges> special_edges;
   };
   struct EnclosedSubNFA {
-    void Serialize(quick::OByteStream&) const;
-    void Deserialize(quick::IByteStream&);
+    void Serialize(quick::OByteStream&) const;  // NOLINT
+    void Deserialize(quick::IByteStream&);  // NOLINT
     bool operator==(const EnclosedSubNFA& o) const;
-    void DebugStream(qk::DebugStream& ds) const;
+    void DebugStream(qk::DebugStream& ds) const;  // NOLINT
 
     NFAStateMap<ParsingStream> final_states;
     NFAState start_state;
@@ -119,7 +120,8 @@ struct AParseMachine : public quick::AbstractType {
                      Alphabet a,
                      qk::unordered_set<NFAState>* output) const;
 
-  qk::unordered_set<NFAState> GetNextStates(const NFAState& s, Alphabet a) const;
+  qk::unordered_set<NFAState> GetNextStates(const NFAState& s,
+                                            Alphabet a) const;
 
   void GetNextStackOps(const NFAState& s,
                        Alphabet a,
@@ -140,7 +142,7 @@ struct AParseMachine : public quick::AbstractType {
 
   bool IsFinalState(const NFAState& state) const;
 
-  void DebugStream(qk::DebugStream& ds) const;
+  void DebugStream(qk::DebugStream& ds) const;  // NOLINT
 
   void GetParsingStream(const NFAState& source,
                         Alphabet a,
@@ -155,8 +157,8 @@ struct AParseMachine : public quick::AbstractType {
 
   std::string DebugString() const;
   std::string ShortDebugString() const;
-  void Serialize(quick::OByteStream&) const;
-  void Deserialize(quick::IByteStream&);
+  void Serialize(quick::OByteStream&) const;  // NOLINT
+  void Deserialize(quick::IByteStream&);  // NOLINT
   bool operator==(const AParseMachine& o) const;
   std::string Export() const;
   bool Import(const std::string& serialized_machine);
@@ -170,7 +172,8 @@ struct AParseMachine : public quick::AbstractType {
   NFAStateMap<int> nfa_lookup_map;
   std::unordered_map<int, EnclosedSubNFA> enclosed_subnfa_map;
   bool initialized = false;
-private:
+
+ private:
   // return Vector<Pair(1. number of suffixes stripped from NFAState,
   //                    2. Corrosponding outgoing edges)>
   vector<pair<int, const OutgoingEdges*>> GetOutgoingEdgesList(

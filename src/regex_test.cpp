@@ -28,6 +28,7 @@ TEST(RegexTest, NoNewRegexType) {
     case Regex::UNION: break;
     case Regex::KSTAR: break;
     case Regex::KPLUS: break;
+    case Regex::ID: break;
   }
 }
 
@@ -37,7 +38,7 @@ TEST(RegexTest, Constructors) {
   Regex r3(Regex::EPSILON);
   Regex r4(Regex::CONCAT, {r1, r2, r3});
   Regex r5(Regex::CONCAT, r4.children);
-  Regex r6(Regex::CONCAT, {10, 20, 30});
+  Regex r6(Regex::CONCAT, {Regex(10), Regex(20), Regex(30)});
   EXPECT_EQ(r1.type, Regex::UNION);
   EXPECT_EQ(r1.children.size(), 2);
   EXPECT_EQ(r2.alphabet, 120);
@@ -54,11 +55,6 @@ TEST(RegexTest, Constructors) {
   EXPECT_EQ(r6.DebugString(), "(10 20 30)");
 }
 
-
-
-
-
-
 TEST(RegexTest, Operators) {
   Regex r1(Regex::UNION, {Regex(12), Regex(Regex::EPSILON)});
   auto r11 = r1;
@@ -73,5 +69,3 @@ TEST(RegexTest, Operators) {
   EXPECT_EQ(r4.children.size(), 5);
   EXPECT_EQ(r4.DebugString(), "((12 | EPSILON) 120 EPSILON 20 10)");
 }
-
-

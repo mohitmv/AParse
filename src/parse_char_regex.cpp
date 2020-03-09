@@ -2,7 +2,7 @@
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
 #include "src/parse_char_regex.hpp"
-#include "aparse/internal_parser_builder.hpp"
+#include "src/internal_parser_builder.hpp"
 
 #include <quick/time.hpp>
 #include <quick/debug.hpp>
@@ -24,12 +24,11 @@ Regex ParseCharRegex::Parse(const string& input) {
 bool ParseCharRegex::Parse(const string& input, Regex* output, Error* error) {
   static ParserType char_regex_parser;
   if (not char_regex_parser.IsFinalized()) {
-    InternalParserBuilder parser_builder;
     auto p_rules = CharRegexParserRules();
-    parser_builder.Build(p_rules.first, p_rules.second, &char_regex_parser);
+    InternalParserBuilder::Build(p_rules.first, p_rules.second, &char_regex_parser);
   }
   auto parser = char_regex_parser.CreateInstance();
-  for (char c: input) {
+  for (char c : input) {
     if (not parser.Feed(uchar(c), error)) {
       return false;
     }

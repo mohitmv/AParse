@@ -1,55 +1,57 @@
 #include <iostream>
+#include <signal.h>
+#include <execinfo.h>
+#include <unistd.h>
+
 using namespace std;
 
+struct S {int x;};
+
+S* s = nullptr;
+
+
+void printStacktrace()
+{
+    void *array[20];
+    size_t size = backtrace(array, sizeof(array) / sizeof(array[0]));
+    cout << array[0] << endl;
+    cout << array[1] << endl;
+    backtrace_symbols_fd(array, size, STDERR_FILENO);
+}
+
+void signalHandler(int sig) {
+  cout << "signalHandler " << sig << endl;
+  printStacktrace();
+  cout << "Exiting.." << endl;
+  exit(sig);
+}
+
+
 namespace A {
-
-template<typename T>
-T F(T x) {
-  return x*3;
+void G();
 }
 
-}
-
-
-namespace B {
-
-template<typename T>
-T F(T x) {
-  return x*2;
-}
-
-}
-
-
-namespace A {
-
-int G() {
-  return F(10);
-}
-
-}
-
-
+void F();
 
 int main() {
+  // if (s == nullptr) {
+  //   cout << "aaa" << endl;
+  //   *a = 10;
+  // }
+  for (auto& a : {SIGSEGV, SIGILL, SIGFPE, SIGABRT, SIGBUS, SIGTERM}) {
+    cout << "Registring with signal " << a << endl;
+    signal(a, signalHandler);
+  }
+  // actual_terminate = std::set_terminate(terminateHandler);
 
-  cout << A::G() << endl;
 
-  // Json m = Json::object {{"a", "111"}, {"b", 22}};
+  // std::terminate();
+  cout << "Here" << endl;
+  // std::abort();
+  // throw std::runtime_error("Runtime error");
 
-  // cout << m.dump() << endl;
-  // cout << m["a"].dump() << endl;
-
-  // string s = qk::ReadFile("/tmp/null.py");
-
-  // cout << s << endl;
-  // cout << qk::ReadFile("/tmp/null.py09876") << endl;
-
-  // vector<int> v = {11, 222, 3333, 44444, 555555};
-
-  // cout << v << endl;
-
-  // cout << "Saini Mohit" << endl;
+  cout << "Registred" << endl;
+  F();
+  cout << "bb" << endl;
   return 0;
 }
-

@@ -112,7 +112,7 @@ string Regex::DebugString(
         if (input.children.size() <= 1) {
           oss << "C(";
         } else {
-          oss << "( ";
+          oss << "(";
         }
         for (int i = 0; i < input.children.size(); i++) {
           lPrintRegex(input.children[i]);
@@ -120,7 +120,7 @@ string Regex::DebugString(
             oss << " ";
           }
         }
-        oss << " )";
+        oss << ")";
         break;
       }
       case KSTAR: {
@@ -142,7 +142,7 @@ string Regex::DebugString(
         break;
       }
       default:
-        _APARSE_DEBUG_ASSERT(false, (int)input.type);
+        APARSE_DEBUG_ASSERT(false, (int)input.type);
         break;
     }
     if (input.label > 0) {

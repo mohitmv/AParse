@@ -1,7 +1,7 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#include "aparse/internal_parser_builder.hpp"
+#include "src/internal_parser_builder.hpp"
 
 #include <memory>
 
@@ -18,14 +18,14 @@ vector<vector<int>> ExtractRegexAtoms(
     const vector<pair<int, Regex>>& rules) {
   std::function<void(const Regex&, vector<int>* output)> lGetTerms;
   lGetTerms = [&](const Regex& input, vector<int>* output) {
-    switch(input.type) {
+    switch (input.type) {
       case Regex::ATOMIC:
         output->push_back(input.alphabet); break;
       case Regex::UNION:
       case Regex::CONCAT:
       case Regex::KSTAR:
       case Regex::KPLUS: {
-        for (auto& child: input.children) {
+        for (auto& child : input.children) {
           lGetTerms(child, output);
         }
         break;
@@ -58,10 +58,10 @@ vector<int> ExtractRuleNonTerminals(
 
 void InternalParserBuilder::Build(const AParseGrammar& grammar,
                                   const vector<utils::any>& rule_actions,
-                                  Parser* parser) const {
+                                  Parser* parser) {
   if (not parser->IsFinalized()) {
-    _APARSE_ASSERT(grammar.Validate());
-    _APARSE_ASSERT(rule_actions.size() == grammar.rules.size());
+    APARSE_ASSERT(grammar.Validate());
+    APARSE_ASSERT(rule_actions.size() == grammar.rules.size());
     auto rule_atoms = helpers::ExtractRegexAtoms(grammar.rules);
     auto rule_non_terminals =
         helpers::ExtractRuleNonTerminals(grammar.rules);
@@ -80,7 +80,7 @@ void InternalParserBuilder::Build(const AParseGrammar& grammar,
 bool InternalParserBuilder::Import(const string& serialized_parser,
                                    std::size_t aparse_grammar_hash,
                                    const vector<utils::any>& rule_actions,
-                                   Parser* parser) const {
+                                   Parser* parser) {
   if (serialized_parser.empty()) {
     return false;
   }
@@ -113,7 +113,7 @@ bool InternalParserBuilder::Import(const string& serialized_parser,
 
 // format-version = 3
 string InternalParserBuilder::Export(const Parser& parser,
-                                     std::size_t aparse_grammar_hash) const {
+                                     std::size_t aparse_grammar_hash) {
   string output;
   Export(parser, aparse_grammar_hash, &output);
   return output;
@@ -123,7 +123,7 @@ string InternalParserBuilder::Export(const Parser& parser,
 // format-version = 3
 void InternalParserBuilder::Export(const Parser& parser,
                                    std::size_t aparse_grammar_hash,
-                                   std::string* serialized_parser) const {
+                                   std::string* serialized_parser) {
   qk::OByteStream bs;
   uint32_t version = 3;
   auto casted_machine = static_cast<const v2::AParseMachine&>(*parser.machine);
