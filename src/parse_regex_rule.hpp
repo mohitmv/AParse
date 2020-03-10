@@ -1,8 +1,15 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_PARSE_REGEX_RULE_HPP_
-#define _APARSE_PARSE_REGEX_RULE_HPP_
+/** This utility is used for converting a grammar rule string to Regex and
+ *  non-terminal pair. Grammar rules are easy to express in string form hence
+ *  we allow the AParse's clients to express their rules in C++ string. If a
+ *  string is not valid grammar rule then this utility returns the detailed
+ *  error.
+ *  Learn more at `src/parse_regex_rule_test.cpp` */
+
+#ifndef APARSE_PARSE_REGEX_RULE_HPP_
+#define APARSE_PARSE_REGEX_RULE_HPP_
 
 #include "src/parse_char_regex.hpp"
 
@@ -16,7 +23,6 @@
 #include "aparse/parser.hpp"
 
 namespace aparse {
-
 
 struct ParsedGrammarRule {
   enum Type {EPSILON, LITERAL, NON_TERMINAL, STRING, UNION, CONCAT, KPLUS,
@@ -62,4 +68,4 @@ AParseGrammar StringRulesToAParseGrammar(
 }  // namespace helpers
 }  // namespace aparse
 
-#endif  // _APARSE_PARSE_REGEX_RULE_HPP_
+#endif  // APARSE_PARSE_REGEX_RULE_HPP_

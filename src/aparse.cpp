@@ -8,7 +8,7 @@
 // Generated using:
 // for i in $(ls src/*.cpp | cat | grep -v '_test'); do echo "#include \"$i\"" ; done #  NOLINT
 
-#include "src/abstract_core_parser.cpp"  // NOLINT
+#include "src/core_parse_node.cpp"  // NOLINT
 #include "src/lexer.cpp"  // NOLINT
 #include "src/internal_lexer_builder.cpp"  // NOLINT
 #include "src/lexer_builder.cpp"  // NOLINT

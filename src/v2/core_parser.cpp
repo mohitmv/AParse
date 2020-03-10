@@ -20,7 +20,6 @@ using NFAStateSet = qk::unordered_set<NFAState>;
 using ParsingStream = AParseMachine::ParsingStream;
 template<typename T> using NFAStateMap = qk::unordered_map<NFAState, T>;
 
-
 NFAStateMap<NFAState> CurrentState::NextStatesMap(
       Alphabet alphabet,
       const AParseMachine& machine) const {

@@ -95,5 +95,4 @@ Error& Error::operator()() {
   return *this;
 }
 
-
 }  // namespace aparse

@@ -1,8 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_SRC_UTILS_HPP_
-#define _APARSE_SRC_UTILS_HPP_
+#ifndef APARSE_SRC_UTILS_HPP_
+#define APARSE_SRC_UTILS_HPP_
 
 #include <functional>
 #include <sstream>
@@ -19,13 +19,16 @@ namespace aparse {
 using quick::ContainsKey;
 namespace utils {
 
+/** map(node_id -> set of adjacent nodes) */
 using SimpleGraph = std::unordered_map<int, std::unordered_set<int>>;
 
-// returns true if no cycle is found. In case of success (no-cycle),
-// topological_sorted will be set appropriately o.w. cycle_path will be set.
+/** returns true if no cycle is found. In case of success (i.e. no-cycle),
+ *  @topological_sorted will be set appropriately o.w. @cycle_path will be set.
+ */
 bool TopologicalSortingInGraph(const SimpleGraph& graph,
                                vector<int>* topological_sorted,
                                vector<int>* cycle_path);
+
 
 // ToDo(Mohit): This is ridiculous design. Improve it !
 template<typename NodeType, typename LChildren, typename LValue>
@@ -63,10 +66,10 @@ string PrintPrettyTree(const NodeType* node,
   return oss.str();
 }
 
-// Check if the given string follows `[a-zA-Z_][a-zA-Z0-9_]*` regex.
+/** Check if the given string follows `[a-zA-Z_][a-zA-Z0-9_]*` regex. */
 bool IsLiteralName(const std::string& s);
 
 }  // namespace utils
 }  // namespace aparse
 
-#endif  // _APARSE_SRC_UTILS_HPP_
+#endif  // APARSE_SRC_UTILS_HPP_

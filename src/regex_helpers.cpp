@@ -84,7 +84,5 @@ Regex SC(const string& s) {
   }
 }
 
-
-
 }  // namespace helpers
 }  // namespace aparse

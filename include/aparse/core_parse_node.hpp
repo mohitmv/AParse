@@ -1,8 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_ABSTRACT_CORE_PARSER_HPP_
-#define _APARSE_ABSTRACT_CORE_PARSER_HPP_
+#ifndef APARSE_CORE_PARSE_NODE_HPP_
+#define APARSE_CORE_PARSE_NODE_HPP_
 
 #include <string>
 #include <utility>
@@ -17,7 +17,28 @@
 namespace aparse {
 
 /** Node of ParseTree. Learn more about the structure at
- *  `https://aparse.readthedocs.io/`. */
+ *  `https://aparse.readthedocs.io/`. 
+ *  Consider this sample grammar G {
+ *    Main ::= B  | C
+ *    B    ::= b* | c* | C* (ab)+
+ *    C    ::= ac
+ *  }
+ *  Language(G) = {EPSILON, c, cc, ccc, b, bb, bbb, ab, abab, acab, acacab,
+ *                 acacacab, ...}
+ *  ParseTree(acacacab) = 
+ *
+ *                           Main
+ *                            |
+ *                     _ _ _ _B _ _
+ *                   _/    _/ | \  \_
+ *                  /     /   |  \   \
+ *               _ C    _C    C   a   b
+ *              /  |   / |   / \
+ *             a   c  a  c  a   c
+ *
+ *  Where a non-leaf node represents a non-terminal. CoreParseNode::label is
+ *  the index of rule corrosponding to the non-terminal.
+ *  start and end index is the range of substring represented by that node. */
 struct CoreParseNode {
   CoreParseNode() {}
   explicit CoreParseNode(int label): label(label) {}
@@ -50,32 +71,6 @@ struct CoreParseNode {
   vector<CoreParseNode> children;
 };
 
-
-class AbstractCoreParser {
- public:
-  AbstractCoreParser() = default;
-  virtual ~AbstractCoreParser() = default;
-  virtual void SetAParseMachine(const qk::AbstractType* machine) = 0;
-
-  virtual bool Parse(CoreParseNode* output) = 0;
-  virtual void ParseOrDie(CoreParseNode* output) = 0;
-  virtual bool Parse(CoreParseNode* output, Error* error) = 0;
-
-  virtual bool Feed(Alphabet alphabet) = 0;
-  virtual void FeedOrDie(Alphabet alphabet) = 0;
-  virtual bool Feed(Alphabet alphabet, Error* error) = 0;
-  virtual bool Feed(const std::vector<Alphabet>& stream) = 0;
-  virtual void FeedOrDie(const std::vector<Alphabet>& stream) = 0;
-  virtual bool Feed(const std::vector<Alphabet>& stream, Error* error) = 0;
-
-  virtual bool CanFeed(Alphabet alphabet) const = 0;
-  virtual bool IsFinal() const = 0;
-  virtual void Reset() = 0;
-  virtual const std::vector<Alphabet>& GetStream() const = 0;
-  virtual std::unordered_set<Alphabet> PossibleAlphabets() const = 0;
-  virtual std::unordered_set<Alphabet> PossibleAlphabets(int k) const = 0;
-};
-
 }  // namespace aparse
 
-#endif  // _APARSE_CORE_PARSER_HPP_
+#endif  // APARSE_CORE_PARSE_NODE_HPP_

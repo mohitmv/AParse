@@ -1,8 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_SRC_V2_CORE_PARSER_HPP_
-#define _APARSE_SRC_V2_CORE_PARSER_HPP_
+#ifndef APARSE_SRC_V2_CORE_PARSER_HPP_
+#define APARSE_SRC_V2_CORE_PARSER_HPP_
 
 #include <string>
 #include <utility>
@@ -15,7 +15,7 @@
 #include <quick/debug_stream_decl.hpp>
 
 #include "aparse/error.hpp"
-#include "aparse/abstract_core_parser.hpp"
+#include "src/abstract_core_parser.hpp"
 #include "src/v2/aparse_machine.hpp"
 
 namespace aparse {
@@ -55,6 +55,14 @@ struct CurrentState {
   NFAStateSet nfa_states;
 };
 
+
+/** CoreParser the the main Parser, which parse a string and create ParseTree.
+ *  CoreParser stores the const-reference of AParseMachine. Hence
+ *  AParseMachine must live longer than CoreParser object.
+ *  CoreParser is used by Parser, which is a shallow wrapper around CoreParser.
+ *  To parse multiple string, client can either create different CoreParser
+ *  objects or client can invoke Reset method and reuse the same CoreParser
+ *  object. */
 class CoreParser : public AbstractCoreParser {
  public:
   CoreParser() = default;
@@ -110,5 +118,4 @@ class CoreParser : public AbstractCoreParser {
 }  // namespace v2
 }  // namespace aparse
 
-#endif  // _APARSE_SRC_V2_CORE_PARSER_HPP_
-
+#endif  // APARSE_SRC_V2_CORE_PARSER_HPP_

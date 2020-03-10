@@ -1,8 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_SRC_V2_INTERNAL_APARSE_GRAMMAR_HPP_
-#define _APARSE_SRC_V2_INTERNAL_APARSE_GRAMMAR_HPP_
+#ifndef APARSE_SRC_V2_INTERNAL_APARSE_GRAMMAR_HPP_
+#define APARSE_SRC_V2_INTERNAL_APARSE_GRAMMAR_HPP_
 
 #include <utility>
 #include <list>
@@ -21,21 +21,21 @@
 namespace aparse {
 namespace v2 {
 
-// 'InternalAParseGrammar' is a preprocessed version of AparseGrammar. We offer
-//  a lot of flexibility in AParseGrammar to make it easy to design. However
-//  these flexibilities can be reduced to non-flexible version of AParseGrammar
-//  by doing some preprocessing.
-// eg:
-// 1). We allow a single non-terminal to be defined in multiple rules. After
-//     preprocessing step, these non-terminals are combibed into single rule by
-//     joining the corrosponding expressions with UNION operator.
-// 2). In addition to that we attach a label (a unique-id (integer)) on the
-//     rule-regex so that later we can identify the grammar-rule a regex
-//     corrosponds to.
-// 3). Construct the enclosed-non-terminals by extraing out the sub-expressions
-//     wrapped in branching alphabets.
-//
-// Usage: InternalAParseGrammar igrammar; igrammar.Build(...);
+/** InternalAParseGrammar' is a preprocessed version of AparseGrammar. We offer
+ *  a lot of flexibility in AParseGrammar to make it easy to design. However
+ *  these flexibilities can be reduced to non-flexible version of AParseGrammar
+ *  by doing some preprocessing.
+ *  Eg:
+ *  1). We allow a single non-terminal to be defined in multiple rules. After
+ *      preprocessing step, these non-terminals are combibed into single rule by
+ *      joining the corrosponding expressions with UNION operator.
+ *  2). In addition to that we attach a label (a unique-id (integer)) on the
+ *      rule-regex so that later we can identify the grammar-rule a regex
+ *      corrosponds to.
+ *  3). Constructs the enclosed-non-terminals by extraing out the
+ *      sub-expressions wrapped in branching alphabets.
+ *
+ * Usage: InternalAParseGrammar igrammar; igrammar.Build(...); */
 class InternalAParseGrammar {
  public:
   InternalAParseGrammar() {}
@@ -94,5 +94,4 @@ class InternalAParseGrammar {
 }  // namespace v2
 }  // namespace aparse
 
-
-#endif  // _APARSE_SRC_V2_INTERNAL_APARSE_GRAMMAR_HPP_
+#endif  // APARSE_SRC_V2_INTERNAL_APARSE_GRAMMAR_HPP_

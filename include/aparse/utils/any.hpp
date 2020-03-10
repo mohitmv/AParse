@@ -1,11 +1,11 @@
 // Copyright: 2020 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-// This is a naive implementation of std::any
-// Refer to corresponding any_test.cpp for usage patterns.
+// This is a naive implementation of std::any with a slight deviation.
+// Refer to corresponding `src/utils/any_test.cpp` for usage patterns.
 
-#ifndef _APARSE_SRC_UTILS_ANY_HPP_
-#define _APARSE_SRC_UTILS_ANY_HPP_
+#ifndef APARSE_SRC_UTILS_ANY_HPP_
+#define APARSE_SRC_UTILS_ANY_HPP_
 
 #include <memory>
 #include <type_traits>
@@ -100,9 +100,7 @@ struct any {
   copy_func_type copy_func_ = nullptr;
 };
 
-
 }  // namespace utils
 }  // namespace aparse
 
-
-#endif  // _APARSE_SRC_UTILS_ANY_HPP_
+#endif  // APARSE_SRC_UTILS_ANY_HPP_

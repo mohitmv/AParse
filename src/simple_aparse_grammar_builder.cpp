@@ -58,5 +58,4 @@ void AParseGrammarIntAssignment(
 
 }  // namespace helpers
 
-
 }  // namespace aparse

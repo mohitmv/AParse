@@ -1,7 +1,7 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#include "aparse/abstract_core_parser.hpp"
+#include "aparse/core_parse_node.hpp"
 
 #include <sstream>
 
@@ -40,6 +40,4 @@ bool CoreParseNode::IsInitialized() const {
   return (children.size() > 0);
 }
 
-
 }  // namespace aparse
-

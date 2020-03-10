@@ -8,7 +8,6 @@
 #include "src/parse_char_regex_rules.hpp"
 #include "src/regex_helpers.hpp"
 
-
 namespace aparse {
 
 using uchar = unsigned char;
@@ -21,7 +20,6 @@ using helpers::KP;
 using helpers::E;
 using helpers::SU;
 using helpers::SC;
-
 
 pair<AParseGrammar, vector<utils::any>> CharRegexParserRules() {
   using ParsingScope = CharRegexParserScope;

@@ -479,4 +479,3 @@ void AParseMachineBuilder::DebugStream(qk::DebugStream& ds) const {
 }  // namespace aparse_machine_builder_impl
 }  // namespace v2
 }  // namespace aparse
-

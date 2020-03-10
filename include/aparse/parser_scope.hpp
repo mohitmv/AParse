@@ -1,8 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_PARSER_SCOPE_HPP_
-#define _APARSE_PARSER_SCOPE_HPP_
+#ifndef APARSE_PARSER_SCOPE_HPP_
+#define APARSE_PARSER_SCOPE_HPP_
 
 #include <memory>
 #include <unordered_map>
@@ -19,7 +19,11 @@
 
 namespace aparse {
 
-
+/** ParserScope is used for defining RuleActions, which are used while
+ *  constructing SyntaxTree from the ParseTree.
+ *  Client may inherit from this class and create a custom ParserScope to be
+ *  used in their RuleAction.
+ *  Learn more about AParse's ParserScope at https://aparse.readthedocs.io  */
 template<typename SyntaxTreeNode>
 class ParserScopeBase {
   struct TreeBuildingConstructs {
@@ -67,7 +71,6 @@ class ParserScopeBase {
   int AlphabetIndex() {
     return AlphabetIndexList()[0];
   }
-  // Alphabet GetAlphabet(int index) { return rule_atoms_[index]; };
   vector<Alphabet>& GetAlphabetList() {
     return tree_building_constructs->token_list_2;
   }
@@ -117,4 +120,4 @@ class ParserScopeBase {
 
 }  // namespace aparse
 
-#endif  // _APARSE_PARSER_SCOPE_HPP_
+#endif  // APARSE_PARSER_SCOPE_HPP_

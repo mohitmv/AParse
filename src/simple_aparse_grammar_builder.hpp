@@ -1,8 +1,17 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_SRC_SIMPLE_APARSE_GRAMMAR_BUILDER_HPP_
-#define _APARSE_SRC_SIMPLE_APARSE_GRAMMAR_BUILDER_HPP_
+/** A test-utility, used for constructing sample AParseGrammar.
+ *  The Alphabets in Regex as well as AParseGrammar are actually int32_t. Which
+ *  is good for parsing efficiency but it makes difficult for a developer to
+ *  understand the meaning of an alphabet. This utility allows to construct our
+ *  grammar using string alphabets, which are later converted to integer
+ *  alphabets by this utility. This utility generates the AParseGrammar as well
+ *  as alphabet-to-string-map.
+ */
+
+#ifndef APARSE_SRC_SIMPLE_APARSE_GRAMMAR_BUILDER_HPP_
+#define APARSE_SRC_SIMPLE_APARSE_GRAMMAR_BUILDER_HPP_
 
 #include <vector>
 #include <map>
@@ -82,8 +91,6 @@ class SimpleAParseGrammarBuilder {
   std::unordered_map<string, int> string_map;
 };
 
-
 }  // namespace aparse
 
-
-#endif  // _APARSE_SRC_SIMPLE_APARSE_GRAMMAR_BUILDER_HPP_
+#endif  // APARSE_SRC_SIMPLE_APARSE_GRAMMAR_BUILDER_HPP_

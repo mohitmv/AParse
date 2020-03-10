@@ -93,7 +93,6 @@ bool AParseMachine::operator==(const AParseMachine& other) const {
           enclosed_subnfa_map == other.enclosed_subnfa_map);
 }
 
-
 void AParseMachine::Serialize(qk::OByteStream& bs) const {
   bs << nfa_map << start_state << final_states << nfa_lookup_map
      << enclosed_subnfa_map;
@@ -103,12 +102,6 @@ void AParseMachine::Deserialize(qk::IByteStream& bs) {
   bs >> nfa_map >> start_state >> final_states >> nfa_lookup_map
      >> enclosed_subnfa_map;
 }
-
-
-
-
-
-
 
 pair<int, int> NFAState::GetI(int i) const {
   return full_path.at(i);
@@ -126,7 +119,6 @@ int NFAState::GetFullPathSize() const {
 bool NFAState::IsLocal() const {
   return (full_path.size() == 0);
 }
-
 
 
 std::size_t NFAState::GetHash() const {
@@ -427,7 +419,5 @@ bool AParseMachine::Import(const std::string& serialized_machine) {
   return true;
 }
 
-
 }  // namespace v2
 }  // namespace aparse
-

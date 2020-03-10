@@ -2,12 +2,13 @@
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
 #include "src/internal_lexer_builder.hpp"
-#include "src/lexer_machine_builder.hpp"
 
 #include <memory>
+#include <unordered_map>
+
+#include "src/lexer_machine_builder.hpp"
 
 namespace aparse {
-
 // sttaic
 bool InternalLexerBuilder::Build(const InternalLexerGrammar& lexer_grammar,
                                  Lexer* output) {

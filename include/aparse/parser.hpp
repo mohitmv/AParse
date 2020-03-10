@@ -14,7 +14,7 @@
 
 #include "aparse/common_headers.hpp"
 #include "aparse/error.hpp"
-#include "aparse/abstract_core_parser.hpp"
+#include "aparse/core_parse_node.hpp"
 #include "aparse/parser_scope.hpp"
 #include "aparse/syntax_tree_maker.hpp"
 
@@ -22,6 +22,8 @@
 #include <quick/utility.hpp>
 
 namespace aparse {
+
+class AbstractCoreParser;
 
 class Parser;
 
@@ -146,10 +148,16 @@ class ParserInstance {
   void CreateSyntaxTree(ParserScope* scope, SyntaxTreeNode* output) {
     APARSE_ASSERT(parse_tree.IsInitialized());
     syntax_tree_maker->Build(parse_tree,
-                             core_parser->GetStream(),
+                             GetStream(),
                              scope,
                              output);
   }
+
+ private:
+  /** Returns the list of all the alphabets fed so far. This list is owned by
+   *  core_parser, so this method returns const-reference. It's safe to use this
+   *  const-reference as long as ParserInstance object is alive. */
+  const vector<Alphabet>& GetStream() const;
 
   /** Parser and ParserInstance are shallow wrappers around CoreParser,
    *  exposing public facing fancy interfaces. Main work is done by either

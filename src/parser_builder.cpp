@@ -97,7 +97,4 @@ void ParserBuilder::Export(const Parser& parser,
   InternalParserBuilder::Export(parser, grammar_hash, serialized_parser);
 }
 
-
 }  // namespace aparse
-
-

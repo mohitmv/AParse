@@ -1,8 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_SRC_V2_APARSE_MACHINE_BUILDER_HPP_
-#define _APARSE_SRC_V2_APARSE_MACHINE_BUILDER_HPP_
+#ifndef APARSE_SRC_V2_APARSE_MACHINE_BUILDER_HPP_
+#define APARSE_SRC_V2_APARSE_MACHINE_BUILDER_HPP_
 
 #include <utility>
 #include <list>
@@ -141,4 +141,4 @@ using aparse_machine_builder_impl::AParseMachineBuilder;
 }  // namespace aparse
 
 
-#endif  // _APARSE_SRC_V2_APARSE_MACHINE_BUILDER_HPP_
+#endif  // APARSE_SRC_V2_APARSE_MACHINE_BUILDER_HPP_

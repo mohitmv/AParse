@@ -6,9 +6,16 @@
 #include <memory>
 
 #include "quick/utility.hpp"
+
+#include "src/abstract_core_parser.hpp"
 #include "src/v2/core_parser.hpp"
 
 namespace aparse {
+
+const vector<Alphabet>& ParserInstance::GetStream() const {
+  APARSE_DEBUG_ASSERT(core_parser != nullptr);
+  return core_parser->GetStream();
+}
 
 void ParserInstance::Reset() {
   core_parser->Reset();

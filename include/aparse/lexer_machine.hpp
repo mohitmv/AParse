@@ -1,8 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_LEXER_MACHINE_HPP_
-#define _APARSE_LEXER_MACHINE_HPP_
+#ifndef APARSE_LEXER_MACHINE_HPP_
+#define APARSE_LEXER_MACHINE_HPP_
 
 #include <vector>
 #include <unordered_set>
@@ -13,6 +13,8 @@
 
 namespace aparse {
 
+/** Underlying machine used by lexer. Currently we are using deterministic
+ *  finite state automata (DFA). */
 struct LexerMachine {
   struct NFA {
     struct NFAState {
@@ -45,4 +47,4 @@ struct LexerMachine {
 
 }  // namespace aparse
 
-#endif  // _APARSE_LEXER_MACHINE_HPP_
+#endif  // APARSE_LEXER_MACHINE_HPP_

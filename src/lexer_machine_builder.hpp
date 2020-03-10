@@ -1,8 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_LEXER_MACHINE_BUILDER_HPP_
-#define _APARSE_LEXER_MACHINE_BUILDER_HPP_
+#ifndef APARSE_LEXER_MACHINE_BUILDER_HPP_
+#define APARSE_LEXER_MACHINE_BUILDER_HPP_
 
 #include <unordered_map>
 
@@ -25,4 +25,4 @@ class LexerMachineBuilder {
 };
 }  // namespace aparse
 
-#endif  // _APARSE_LEXER_MACHINE_BUILDER_HPP_
+#endif  // APARSE_LEXER_MACHINE_BUILDER_HPP_

@@ -1,8 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_SYNTAX_TREE_MAKER_HPP_
-#define _APARSE_SYNTAX_TREE_MAKER_HPP_
+#ifndef APARSE_SYNTAX_TREE_MAKER_HPP_
+#define APARSE_SYNTAX_TREE_MAKER_HPP_
 
 #include <tuple>
 #include <memory>
@@ -19,9 +19,11 @@
 #include <quick/debug.hpp>
 #include <quick/utility.hpp>
 
-
 namespace aparse {
 
+/** Create the SyntaxTree from the given ParseTree.
+    It use the client defined RuleActions. Learn more about RuleActions at
+    https://aparse.readthedocs.io */
 struct SyntaxTreeMaker {
   SyntaxTreeMaker(const std::vector<utils::any>& rule_actions,
                   const std::vector<vector<Alphabet>>& rule_atoms,
@@ -100,4 +102,4 @@ struct SyntaxTreeMaker {
 
 }  // namespace aparse
 
-#endif  // _APARSE_SYNTAX_TREE_MAKER_HPP_
+#endif  // APARSE_SYNTAX_TREE_MAKER_HPP_

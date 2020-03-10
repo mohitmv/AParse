@@ -11,7 +11,6 @@ namespace aparse {
 
 using uchar = unsigned char;
 
-
 Regex ParseCharRegex::Parse(const string& input) {
   Regex output;
   Error error;
@@ -25,7 +24,9 @@ bool ParseCharRegex::Parse(const string& input, Regex* output, Error* error) {
   static ParserType char_regex_parser;
   if (not char_regex_parser.IsFinalized()) {
     auto p_rules = CharRegexParserRules();
-    InternalParserBuilder::Build(p_rules.first, p_rules.second, &char_regex_parser);
+    InternalParserBuilder::Build(p_rules.first,
+                                 p_rules.second,
+                                 &char_regex_parser);
   }
   auto parser = char_regex_parser.CreateInstance();
   for (char c : input) {
@@ -42,7 +43,4 @@ bool ParseCharRegex::Parse(const string& input, Regex* output, Error* error) {
   return true;
 }
 
-
 }  // namespace aparse
-
-

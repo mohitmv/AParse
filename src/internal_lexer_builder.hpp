@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 #include <quick/type_traits/function_type.hpp>
 

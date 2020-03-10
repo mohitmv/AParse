@@ -1,8 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_PARSE_CHAR_REGEX_RULES_HPP_
-#define _APARSE_PARSE_CHAR_REGEX_RULES_HPP_
+#ifndef APARSE_PARSE_CHAR_REGEX_RULES_HPP_
+#define APARSE_PARSE_CHAR_REGEX_RULES_HPP_
 
 #include <string>
 #include <utility>
@@ -41,9 +41,6 @@ struct CharRegexParserScope : public ParserScopeBase<Regex> {
 
 pair<AParseGrammar, vector<utils::any>> CharRegexParserRules();
 
-
 }  // namespace aparse
 
-
-
-#endif  //  _APARSE_PARSE_CHAR_REGEX_RULES_HPP_
+#endif  //  APARSE_PARSE_CHAR_REGEX_RULES_HPP_

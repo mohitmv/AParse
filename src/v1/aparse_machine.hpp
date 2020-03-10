@@ -23,8 +23,9 @@ static_assert(false, "use `aparse_machine_v3` instead");
 
 namespace aparse {
 
-// AParseMachine is used for parsing AParse languages.
-// AParseMachine is generated for a AParseGrammar using AParseMachineBuilder.
+/** AParseMachine is used for parsing AParse languages.
+ *  AParseMachine is generated for a AParseGrammar using AParseMachineBuilder.
+ */
 struct AParseMachine {
   struct StackOperation {
     enum OperationType: uint8_t {PUSH, POP, NOOP};
@@ -36,16 +37,18 @@ struct AParseMachine {
     bool operator==(const StackOperation& o) const;
 
     OperationType type = NOOP;
-    int32_t value = 0;  // Applicable only for PUSH operation.
+    /** Applicable only for PUSH operation. */
+    int32_t value = 0;
   };
-  // This is different from branching-alphabet in AParseGrammar.
-  // BranchSymbolType is used for creating parse-tree from a alphabet stream.
-  // Ideally it should be renamed to START_CHILD, END_CHILD
+  /** This is different from branching-alphabet in AParseGrammar.
+   * BranchSymbolType is used for creating parse-tree from a alphabet stream.
+   * Ideally it should be renamed to START_CHILD, END_CHILD */
   enum BranchSymbolType: uint8_t {START_BRANCH, END_BRANCH};
+
   static std::string GetBranchSymbolTypeString(BranchSymbolType t);
-  // A stream made of '(' and ')', (example: "((())(())" ), which will be
-  // used while creating parsed-tree. Each '(' or ')' is labelled with
-  // corrosponding regex's label (integer).
+  /* A stream made of '(' and ')', (example: "((())(())" ), which will be
+   * used while creating parsed-tree. Each '(' or ')' is labelled with
+   * corrosponding regex's label (integer). */
   typedef std::vector<pair<BranchSymbolType, int32_t>> ParsingStream;
   struct NFA {
     struct EdgeLabel {

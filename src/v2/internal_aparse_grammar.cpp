@@ -69,11 +69,6 @@ void ComputeDependency(const Regex& regex,
 
 }  // namespace
 
-
-namespace helpers {
-}  // namespace helpers
-
-
 // @id_counter : enclosed_non_terminal_id_counter
 void InternalAParseGrammar::ConstructEnclosedNonTerminals(
     std::vector<pair<int, Regex>>* rules_list,

@@ -1,6 +1,11 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
+/** Include this header for the commonly used stuff. It includes:
+ *  1. very common STL containers.
+ *  2. AParse specific terms and typenames. (Eg: using Alphabet = int32_t)
+ *  3. <aparse/assert.hpp> for aparse specific assertions. */
+
 #ifndef APARSE_COMMON_HEADERS_HPP_
 #define APARSE_COMMON_HEADERS_HPP_
 

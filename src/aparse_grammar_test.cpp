@@ -25,5 +25,3 @@ TEST(AParseGrammar, Basic) {
   EXPECT_NO_THROW(g.Validate());
   EXPECT_GT(g.DebugString().size(), 0);
 }
-
-

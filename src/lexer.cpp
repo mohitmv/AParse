@@ -16,5 +16,4 @@ bool Lexer::Finalize() {
   return true;
 }
 
-
 }  // namespace aparse

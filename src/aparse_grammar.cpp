@@ -21,7 +21,6 @@ using std::unordered_set;
 
 namespace {
 
-
 // This method is deprecated. Use utils::TopologicalSortingInGraph instead.
 // @graph is a map from node -> set of outgoing nodes.
 // returns true if there is no cycle.
@@ -266,6 +265,5 @@ std::size_t AParseGrammar::GetHash() const {
                                      qk::HashFunction(rules),
                                      qk::HashFunction(branching_alphabets)));
 }
-
 
 }  // namespace aparse

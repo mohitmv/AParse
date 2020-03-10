@@ -48,21 +48,6 @@ class CoreParserIntegrationTest : public ::testing::Test {
   void SetUp() override {}
 };
 
-TEST_F(CoreParserIntegrationTest, DISABLED_Test) {
-  CoreParser parser(&m3);
-  if (true) {
-    // [NUM, NUM]
-    EXPECT_TRUE(parser.Feed(0));
-    EXPECT_TRUE(parser.Feed(6));
-    // EXPECT_TRUE(parser.Feed(4));
-    // EXPECT_TRUE(parser.Feed(6));
-    EXPECT_TRUE(parser.Feed(1));
-    CoreParseNode tree;
-    EXPECT_TRUE(parser.Parse(&tree));
-    cout << "tree = " << tree << endl;
-  }
-}
-
 TEST_F(CoreParserIntegrationTest, SampleGrammar1Basic) {
   CoreParser parser(&m1);
   {
@@ -394,6 +379,3 @@ TEST_F(CoreParserIntegrationTest, ImportExport) {
   EXPECT_EQ(m2, m22);
   EXPECT_EQ(m3, m33);
 }
-
-
-

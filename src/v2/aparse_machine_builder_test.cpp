@@ -26,7 +26,6 @@ using NFAState = AParseMachine::NFAState;
 using ParsingStream = AParseMachineBuilder::ParsingStream;
 using OutgoingEdges = AParseMachineBuilder::OutgoingEdges;
 
-
 class NFABuilderTest : public ::testing::Test {
  public:
   using B = AParseMachine::BranchSymbolType;

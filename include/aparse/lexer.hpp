@@ -43,7 +43,6 @@ struct LexerScopeBase {
 
 class Lexer;
 
-
 template<typename LexerScope = LexerScopeBase>
 class LexerInstance {
  public:
@@ -158,7 +157,7 @@ class LexerInstance {
   void InvokeRuleAction(int label) {
     using ActionType = std::function<void(LexerScope*)>;
     auto& action = pattern_actions->at(label);
-    if (action.has_value()){
+    if (action.has_value()) {
       if (action.can_cast_to<ActionType>()) {
         action.cast_to<ActionType>()(scope);
       } else {
@@ -222,6 +221,5 @@ void LexerInstance<LexerScope>::Init(const Lexer& lexer, LexerScope* scope) {
 }
 
 }  // namespace aparse
-
 
 #endif  // APARSE_LEXER_HPP_

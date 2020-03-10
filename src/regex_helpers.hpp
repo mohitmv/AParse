@@ -1,8 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _SRC_V1_REGEX_BUILDER_HELPERS_HPP_
-#define _SRC_V1_REGEX_BUILDER_HELPERS_HPP_
+#ifndef APARSE_SRC_REGEX_BUILDER_HELPERS_HPP_
+#define APARSE_SRC_REGEX_BUILDER_HELPERS_HPP_
 
 #include <vector>
 #include <unordered_set>
@@ -62,4 +62,4 @@ Regex SC(const string& s);
 }  // namespace helpers
 }  // namespace aparse
 
-#endif  // _SRC_V1_REGEX_BUILDER_HELPERS_HPP_
+#endif  // APARSE_SRC_REGEX_BUILDER_HELPERS_HPP_

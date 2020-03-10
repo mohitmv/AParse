@@ -44,7 +44,5 @@ bool IsLiteralName(const std::string& s) {
   return true;
 }
 
-
 }  // namespace utils
 }  // namespace aparse
-

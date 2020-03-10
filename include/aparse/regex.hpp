@@ -1,8 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_REGEX_HPP_
-#define _APARSE_REGEX_HPP_
+#ifndef APARSE_REGEX_HPP_
+#define APARSE_REGEX_HPP_
 
 #include <vector>
 #include <utility>
@@ -14,6 +14,8 @@
 
 namespace aparse {
 
+/** Regex is a simple RegularExpression object.
+ *  Learn more about the definition of Regex at aparse.readthedocs.io */
 struct Regex {
   enum RegexType {EPSILON, ATOMIC, UNION, CONCAT, KPLUS, KSTAR, ID};
   Regex() {}
@@ -26,6 +28,7 @@ struct Regex {
      : type(regex_type),
        children(std::move(children)) {}
   bool HasChildren() const;
+  /** String representation of RegexType enum */
   static std::string RegexTypeString(RegexType t);
   Regex& operator+(const Regex& other);
   Regex& operator+(Regex&& other);
@@ -41,11 +44,12 @@ struct Regex {
   void Clear();
 
   RegexType type = EPSILON;
-  Alphabet alphabet = 0;  // used only when children.size() == 0
+  /** used only when children.size() == 0 */
+  Alphabet alphabet = 0;
   std::vector<Regex> children;
-  // optional field for external identification purpose.
+  /** optional field for external identification purpose. */
   int label = 0;
 };
 }  // namespace aparse
 
-#endif  // _APARSE_REGEX_HPP_
+#endif  // APARSE_REGEX_HPP_

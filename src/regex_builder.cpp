@@ -198,6 +198,7 @@ Regex RegexBuilderObject::BuildRegex(AlphabetMap* alphabet_map) const {
   return BuildRegex(symbols_map);
 }
 
+// ToDo(Mohit): Enable this method with updated signature.
 
 // Regex RegexBuilder::BuildRegex(const RegexBuilderObject& rbo) {
 //   unordered_set<int> alphabet_set;
@@ -219,6 +220,5 @@ Regex RegexBuilderObject::BuildRegex(AlphabetMap* alphabet_map) const {
 //   }
 //   return rbo.BuildRegex(alphabet_map);
 // }
-
 
 }  // namespace aparse

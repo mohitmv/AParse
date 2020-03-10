@@ -1,11 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-// ToDo(Mohit): Break down this class and create different derived classes
-// for the errors of different components.
-
-#ifndef _APARSE_ERROR_HPP_
-#define _APARSE_ERROR_HPP_
+#ifndef APARSE_ERROR_HPP_
+#define APARSE_ERROR_HPP_
 
 #include <string>
 #include <vector>
@@ -17,7 +14,11 @@
 
 namespace aparse {
 
-
+/** aparse::Error is used for returning AParse specific errors/exceptions.
+ * ToDo(Mohit): 1. Break down this class and create different derived classes
+ *                 for the errors from different components.
+ *              2. Construct the detailed error messages.
+ *              3. This class has to be rewritten. */
 struct Error: public std::exception {
   enum ErrorStatus {SUCCESS, INTERNAL_BUG,
                     LEXER_BUILDER_ERROR,
@@ -114,7 +115,6 @@ struct Error: public std::exception {
   }
 };
 
-
 }  // namespace aparse
 
-#endif  // _APARSE_ERROR_HPP_
+#endif  // APARSE_ERROR_HPP_

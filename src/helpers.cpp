@@ -17,7 +17,5 @@ std::string GetAlphabetString(const std::string& s) {
   }
 }
 
-
 }  // namespace helpers
 }  // namespace aparse
-

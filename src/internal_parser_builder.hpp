@@ -1,8 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_INTERNAL_PARSER_BUILDER_HPP_
-#define _APARSE_INTERNAL_PARSER_BUILDER_HPP_
+#ifndef APARSE_INTERNAL_PARSER_BUILDER_HPP_
+#define APARSE_INTERNAL_PARSER_BUILDER_HPP_
 
 #include <tuple>
 #include <memory>
@@ -44,4 +44,4 @@ class InternalParserBuilder {
 
 }  // namespace aparse
 
-#endif  // _APARSE_INTERNAL_PARSER_BUILDER_HPP_
+#endif  // APARSE_INTERNAL_PARSER_BUILDER_HPP_

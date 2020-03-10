@@ -14,6 +14,9 @@
 #include "aparse/regex.hpp"
 
 namespace aparse {
+
+/** Learn more about definition of AParseGrammar at
+ *  https://aparse.readthedocs.io */
 struct AParseGrammar {
   bool Validate() const;
   std::string DebugString() const;

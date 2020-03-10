@@ -1,8 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_SRC_V2_APARSE_MACHINE_HPP_
-#define _APARSE_SRC_V2_APARSE_MACHINE_HPP_
+#ifndef APARSE_SRC_V2_APARSE_MACHINE_HPP_
+#define APARSE_SRC_V2_APARSE_MACHINE_HPP_
 
 #include <vector>
 #include <map>
@@ -23,8 +23,9 @@ namespace aparse {
 namespace v2 {
 
 
-// AParseMachine is used for parsing AParse languages.
-// AParseMachine is generated for a AParseGrammar using AParseMachineBuilder.
+/** AParseMachine is used for parsing AParse languages.
+ *  AParseMachine is generated for a AParseGrammar using AParseMachineBuilder.
+ */
 struct AParseMachine : public quick::AbstractType {
   struct NFAState {
     NFAState() {}
@@ -38,9 +39,9 @@ struct AParseMachine : public quick::AbstractType {
     NFAState AddPrefix(int non_terminal, int nfa_id) const;
     NFAState AddPrefix(
         const vector<std::pair<int, int>>& specifiers) const;
-    // Consider only first @len specifiers.
+    /** Consider only first @len specifiers. */
     vector<std::pair<int, int>> GetPrefix(int len) const;
-    // Exclude the first @len specifiers.
+    /** Exclude the first @len specifiers. */
     NFAState GetSuffix(int len) const;
     NFAState AddPrefixFromOther(const NFAState& other, int len) const;
     pair<int, int> GetI(int i) const;
@@ -51,7 +52,7 @@ struct AParseMachine : public quick::AbstractType {
 
    private:
     int number;
-    // vector<pair<(non-terminal, instance-id)>>
+    /** vector<pair<(non-terminal, instance-id)>> */
     std::vector<std::pair<int, int>> full_path;
   };
 
@@ -71,9 +72,10 @@ struct AParseMachine : public quick::AbstractType {
     OperationType type = NOP;
     int enclosed_non_terminal;
   };
-  // This is different from branching-alphabet in AParseGrammar.
-  // BranchSymbolType is used for creating parse-tree from a alphabet stream.
-  // Ideally it should be renamed to START_CHILD, END_CHILD
+
+  /** This is different from branching-alphabet in AParseGrammar.
+   *  BranchSymbolType is used for creating parse-tree from a alphabet stream.
+   *  Ideally it should be renamed to START_CHILD, END_CHILD  */
   enum BranchSymbolType: uint8_t {BRANCH_START_MARKER, BRANCH_END_MARKER};
   static std::string GetBranchSymbolTypeString(BranchSymbolType t);
 
@@ -188,9 +190,7 @@ struct AParseMachine : public quick::AbstractType {
 qk::DebugStream& operator<<(qk::DebugStream& ds,
                             AParseMachine::BranchSymbolType bs);
 
-
 }  // namespace v2
 }  // namespace aparse
 
-
-#endif  // _APARSE_SRC_V2_APARSE_MACHINE_HPP_
+#endif  // APARSE_SRC_V2_APARSE_MACHINE_HPP_

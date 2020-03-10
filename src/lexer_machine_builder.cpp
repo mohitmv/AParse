@@ -3,11 +3,17 @@
 
 #include "src/lexer_machine_builder.hpp"
 
+#include <string>
 #include <sstream>
+#include <vector>
+#include <unordered_set>
+#include <set>
+
 #include <quick/unordered_map.hpp>
 #include <quick/unordered_set.hpp>
 #include <quick/debug.hpp>
 #include <quick/stl_utils.hpp>
+
 #include "src/utils.hpp"
 #include "src/regex_helpers.hpp"
 

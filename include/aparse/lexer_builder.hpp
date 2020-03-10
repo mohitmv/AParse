@@ -18,6 +18,11 @@
 
 namespace aparse {
 
+/** LexerGrammar is used for defining the lexer grammar.
+ *  A Lexer Rule is a pair of Regex and the Action that needs to be done when
+ *  that regex is matched in input string.
+ *  Learn more at : https://aparse.readthedocs.io
+ *  Learn more at : 'src/lexer_builder_integration_test.cpp' */
 class LexerGrammar {
  public:
   struct Rule {
@@ -40,7 +45,6 @@ class LexerBuilder {
  public:
   static bool Build(const LexerGrammar& lexer_grammar, Lexer* lexer);
 };
-
 
 }  // namespace aparse
 

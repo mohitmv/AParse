@@ -4,6 +4,7 @@
 #include "src/internal_parser_builder.hpp"
 
 #include <memory>
+#include <utility>
 
 #include "src/v2/aparse_machine_builder.hpp"
 #include "src/v2/core_parser.hpp"

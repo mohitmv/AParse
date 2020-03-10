@@ -1,8 +1,8 @@
 // Copyright: 2015 Mohit Saini
 // Author: Mohit Saini (mohitsaini1196@gmail.com)
 
-#ifndef _APARSE_SRC_REGEX_BUILDER_HPP_
-#define _APARSE_SRC_REGEX_BUILDER_HPP_
+#ifndef APARSE_SRC_REGEX_BUILDER_HPP_
+#define APARSE_SRC_REGEX_BUILDER_HPP_
 
 #include <vector>
 #include <map>
@@ -21,6 +21,14 @@
 
 namespace aparse {
 
+/** RegexBuilderObject is a test utility. It's structure is similar to Regex.
+ *  The only difference is RegexBuilderObject accepts string-alphabets, which
+ *  makes it easy to create a Regex object. Regex expects the alphabets in
+ *  integer form. Which is good for latency and performance but difficult for
+ *  developers to understand the meanings of alphabets. This utility allows
+ *  developers to create their regex object using string alphabets, which is
+ *  later converted to original Regex object. This utility returns the
+ *  alphabet-to-string conversion map as well. */
 struct RegexBuilderObject {
   using RegexType = Regex::RegexType;
   RegexBuilderObject() {}
@@ -69,4 +77,4 @@ struct RegexBuilderObject {
 }  // namespace aparse
 
 
-#endif  // _APARSE_SRC_REGEX_BUILDER_HPP_
+#endif  // APARSE_SRC_REGEX_BUILDER_HPP_

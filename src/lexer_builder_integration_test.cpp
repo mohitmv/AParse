@@ -71,5 +71,3 @@ TEST(AdvanceLexerIntegrationTest, Basic) {
                                  PLUS, NUMBER, CLOSE_B1, PLUS, NUMBER}));
   }
 }
-
-

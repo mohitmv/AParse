@@ -22,12 +22,12 @@ bool LexerBuilder::Build(const LexerGrammar& lexer_grammar, Lexer* lexer) {
         error.string_value = rule.regex_string + "\n";
         throw error();
       }
-      igrammar.rules[section.first].emplace_back(Rule(regex).Action(rule.action));
+      igrammar.rules[section.first].emplace_back(
+                                            Rule(regex).Action(rule.action));
     }
   }
   igrammar.main_section = lexer_grammar.main_section;
   return InternalLexerBuilder::Build(igrammar, lexer);
 }
-
 
 }  // namespace aparse

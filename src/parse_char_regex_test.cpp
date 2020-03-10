@@ -11,18 +11,12 @@
 #include "aparse/error.hpp"
 #include "src/regex_helpers.hpp"
 
-
 using std::string;
-// namespace RegexUtils = aparse::RegexUtils;
 using aparse::ParseCharRegex;
 using aparse::Regex;
 using aparse::Error;
 using std::cout;
 using std::endl;
-
-// static Regex R(int a, int b) {
-//   return RegexUtils::RangeRegex(a, b);
-// }
 
 namespace helpers = aparse::helpers;
 using helpers::C;
@@ -32,15 +26,6 @@ using helpers::KS;
 using helpers::KP;
 using helpers::E;
 using helpers::R;
-
-
-// auto C(vector<Regex>&& u) {return Regex(Regex::CONCAT, u);}
-// auto U(vector<Regex>&& u) {return Regex(Regex::UNION, u);}
-// auto KP(Regex&& r) {return Regex(Regex::KPLUS, {r}); }
-// auto KS(Regex&& r) {return Regex(Regex::KSTAR, {r}); }
-// using R = RegexUtils::RangeRegex;
-// Regex E = Regex::EPSILON;
-
 using uchar = unsigned char;
 
 class ParseCharRegexTest: public ::testing::Test {
@@ -85,4 +70,3 @@ TEST_F(ParseCharRegexTest, ErrorReport) {
 TEST_F(ParseCharRegexTest, DISABLED_GoldenTest) {
   EXPECT_TRUE(false) << "Add Golden Tests";
 }
-
