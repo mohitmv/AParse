@@ -16,7 +16,8 @@
 
 namespace aparse {
 
-// Node of ParseTree.
+/** Node of ParseTree. Learn more about the structure at
+ *  `https://aparse.readthedocs.io/`. */
 struct CoreParseNode {
   CoreParseNode() {}
   explicit CoreParseNode(int label): label(label) {}
@@ -39,7 +40,11 @@ struct CoreParseNode {
          children(std::move(children)) {}
   bool operator==(const CoreParseNode& rhs) const;
   void DebugStream(qk::DebugStream& ds) const;  // NOLINT
+  bool Validate() const;
+  bool IsInitialized() const;
 
+  /** Currently this label represents the index of matching rule in
+   *  AParseGrammar. Rule are numbered 0, 1, 2,... ...(num_rules - 1) */
   int label = 0;
   int start = 0, end = 0;  // start: inclusive, end: exclusive;
   vector<CoreParseNode> children;

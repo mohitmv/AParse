@@ -36,6 +36,10 @@ void CoreParseNode::DebugStream(qk::DebugStream& ds) const {
   ds << utils::PrintPrettyTree(this, lChildren, lValue);
 }
 
+bool CoreParseNode::IsInitialized() const {
+  return (children.size() > 0);
+}
+
 
 }  // namespace aparse
 
