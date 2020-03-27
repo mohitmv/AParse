@@ -1,0 +1,6 @@
+2. Rethink the design structure of top layer. (ParserBuilder / InternalParserBuilder / ParserRegexRule..)
+3. Change all the names (including macros) starting with '_' followed by a upper case char.
+4. Move the stuff out of public AParse.
+5. Remove the usage of common_headers from public headers.
+6. Split the errors.
+

@@ -1,0 +1,42 @@
+
+
+
+1. class Regex: 
+- defined in regex.hpp
+- A simple regex-tree class ({EPSILON, ATOMIC, UNION, CONCAT, KPLUS, KSTAR})
+- Depends on : Nothing
+
+
+
+2. class Error
+- defined in error.hpp
+- Extends std::exception. used for throwing errors during lexer/parser building or lexering/parsing.
+- Depends on : Nothing
+
+
+
+3. class Lexer
+- defined in lexer.hpp
+
+
+
+4. class Parser
+- defined in parser.hpp
+
+
+
+
+
+
+
+
+
+
+Supported Parsers:
+1. CoreParser :- Just parse the input string as per parsing rule. Doesn't allow to add actions.
+2. Parser [Commonly used by public] :- AdvanceParser with a lot of default options with compromised performance.
+3. InternalParser :- Allows to parse and declare actions. Regex must be object not string.
+4. AdvanceParser :- Allows to parse and declare actions. Regex can be string or simple object.
+
+
+
