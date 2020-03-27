@@ -83,6 +83,7 @@ void ParserInstance::Init(const Parser& parser) {
 }
 
 bool Parser::Finalize() {
+  (void)machine_type;
   APARSE_ASSERT(machine != nullptr);
   APARSE_ASSERT(rule_actions.size() > 0);
   APARSE_ASSERT(rule_actions.size() == rule_atoms.size());
