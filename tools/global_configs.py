@@ -1,4 +1,7 @@
-import os, infra_lib
+#!/usr/bin/env python3
+
+import os
+import tools.infra_lib as infra_lib
 
 configs = infra_lib.Object();
 configs.compiler_options = infra_lib.Object();
@@ -34,11 +37,13 @@ configs.dependency_configs = [
   #               hdrs = ["include/aparse/lexer.hpp"],
   #               srcs = ["src/lexer.cpp"]),
 
+  br.CppLibrary("src/aparse",
+                hdrs = ["include/aparse/aparse.hpp"],
+                srcs = ["src/aparse.cpp"],
+                deps = ["toolchain/quick"]),
 
-  # br.CppLibrary("src/aparse",
-  #               hdrs = ["include/aparse/aparse.hpp"],
-  #               srcs = ["src/aparse.cpp"],
-  #               deps = ["toolchain/quick"]),
+  br.CppTest("tests/combined_aparse_test",
+                deps = ["src/aparse"]),
 
   br.CppLibrary("tests/samples/sample_internal_parser_rules",
                 hdrs = ["tests/samples/sample_internal_parser_rules.hpp"],

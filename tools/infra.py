@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-import getopt, sys, infra_lib, os, helpers
+
+import getopt, sys, os, helpers
+
+import tools.infra_lib as infra_lib
 
 is_local_configs_setup_done = True;
 try:
@@ -74,10 +77,10 @@ def main():
   elif command == "lint":
     helpers.RunLintChecks(configs, (args if len(args) > 0 else None));
   elif command in ["run_test", "rt"]:
-    helpers.RunAllTests(configs, pp = 20, tests = (args if len(args) > 0 else None));
+    helpers.RunAllTests(configs, pp = 8, tests = (args if len(args) > 0 else None));
   elif command in ["per_commit_check", "pcc"]:
     helpers.RunLintChecks(configs);
-    helpers.RunAllTests(configs, pp = 20);
+    helpers.RunAllTests(configs, pp = 8);
   else:
     return infra_lib.Exit("Invalid command '" + command + "'");
 

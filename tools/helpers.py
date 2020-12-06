@@ -1,4 +1,7 @@
-import infra_lib, os
+#!/usr/bin/env python3
+
+import tools.infra_lib as infra_lib
+import os
 
 inf = infra_lib;  # Don't use this shortcut in permanent code. It can be used for experimenting.
 
@@ -21,10 +24,10 @@ def RunLintChecks(configs, files = None):
       filter = (lambda x: x.get("ignore_cpplint") != True));
   infra_lib.RunLinuxCommand(os.path.join(configs.toolchain_path + "/cpplint.py") + " --filter=-build/header_guard,-readability/alt_tokens " + " ".join(files));
 
-def RunAllTests(configs, pp = 20, tests = None):
+def RunAllTests(configs, pp = 8, tests = None):
   if (tests == None):
     tests = list(i["name"] for i in configs.dependency_configs if i["type"] == "CppTest")
-  infra_lib.RunLinuxCommand("scons -j"+str(pp) + " mode=" + configs.compiler_options.mode + " " + " ".join(tests));
+  infra_lib.RunLinuxCommand("scons -k -j"+str(pp) + " mode=" + configs.compiler_options.mode + " " + " ".join(tests));
   for i in tests:
     infra_lib.RunLinuxCommand("./" + configs.build_dir + "/" + i);
 
