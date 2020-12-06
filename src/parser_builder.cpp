@@ -5,6 +5,8 @@
 
 #include "aparse/parser_builder.hpp"
 
+#include "quick/debug_stream.hpp"
+
 #include "src/internal_parser_builder.hpp"
 #include "src/parse_regex_rule.hpp"
 
@@ -41,6 +43,17 @@ uint64_t AdvanceParserRulesToGrammarHash(const ParserGrammar& grammar) {
 
 }  // namespace helpers
 
+std::string ParserGrammar::DebugString() const {
+  quick::DebugStream ds;
+  ds << "main_non_terminal = " << main_non_terminal << "\n"
+     << "branching_alphabets = " << branching_alphabets << "\n"
+     << "string_to_alphabet_map = " << string_to_alphabet_map << "\n"
+     << "total rules = " << rules.size() << "\n";
+  for (int i = 0; i < rules.size(); i++) {
+    ds << "rule[" << i << "] = " << rules.at(i).rule_string << "\n";
+  }
+  return ds.str();
+}
 
 bool ParserBuilder::Import(const string& serialized_parser,
                            const ParserGrammar& parser_grammar,

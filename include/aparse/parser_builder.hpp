@@ -33,6 +33,8 @@ class ParserGrammar {
     utils::any action;
   };
 
+  std::string DebugString() const;
+
   std::vector<Rule> rules;
   string main_non_terminal;
   std::vector<std::pair<std::string, std::string>> branching_alphabets;
