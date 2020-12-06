@@ -186,7 +186,7 @@ Regex RegexBuilderObject::BuildRegex() const {
 }
 
 Regex RegexBuilderObject::BuildRegex(AlphabetMap* alphabet_map) const {
-  APARSE_DEBUG_ASSERT(alphabet_map->size() == 0);
+  APARSE_ASSERT(alphabet_map->size() == 0);
   std::set<string> symbols;
   qk::InsertToSet(GetSymbols(), &symbols);
   StringMap symbols_map;

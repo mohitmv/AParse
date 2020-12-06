@@ -157,7 +157,7 @@ bool CoreParser::Feed(Alphabet alphabet) {
     case StackOperation::PUSH:
       stack.push_back(transaction.second.value); break;
     case StackOperation::POP: {
-      APARSE_DEBUG_ASSERT(stack.size() > 0);
+      APARSE_ASSERT(stack.size() > 0);
       stack.pop_back();
       break;
     }
@@ -196,7 +196,7 @@ bool CoreParser::Parse(CoreParseNode* output) {
   enum StreamElement {START_BRANCH, END_BRANCH, ALPHABET};
   vector<pair<int, int>> tracking_stack;
   int ns = machine->dfa.nfa_final_state_map.at(current_state);
-  APARSE_DEBUG_ASSERT(ContainsKey(machine->nfa.final_states, ns));
+  APARSE_ASSERT(ContainsKey(machine->nfa.final_states, ns));
   auto& nfa = machine->nfa;
   vector<AParseMachine::ParsingStream> parsing_stream(1+stream.size());
   parsing_stream[stream.size()] = nfa.states[ns].parsing_stream;
@@ -249,8 +249,8 @@ bool CoreParser::Parse(CoreParseNode* output) {
       }
     }
   }
-  APARSE_DEBUG_ASSERT(branching_stack.size() == 1);
-  APARSE_DEBUG_ASSERT(output->children.size() > 0);
+  APARSE_ASSERT(branching_stack.size() == 1);
+  APARSE_ASSERT(output->children.size() > 0);
   return true;
 }
 

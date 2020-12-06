@@ -94,7 +94,7 @@ pair<AParseGrammar, vector<utils::any>> CharRegexParserRules() {
         output->type = Regex::UNION;
         int rs = scope->ValueList()[0].alphabet;
         int re = scope->ValueList()[1].alphabet;
-        APARSE_DEBUG_ASSERT(rs <= re, "Invalid Range: (" << rs << ":"
+        APARSE_ASSERT(rs <= re, "Invalid Range: (" << rs << ":"
                                                           << re << ")");
         for (int i = rs; i <= re; i++) {
           output->children.push_back(Regex(i));

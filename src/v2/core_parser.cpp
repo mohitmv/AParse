@@ -199,7 +199,7 @@ bool CoreParser::Feed(Alphabet alphabet) {
           machine->enclosed_subnfa_map.at(x.first).start_state);
     }
   } else if (stack_op.first == StackOperation::POP) {
-    APARSE_DEBUG_ASSERT(stack.size() > 0);
+    APARSE_ASSERT(stack.size() > 0);
     auto& stack_frame = stack.back();
     std::unordered_set<int> enclosed_non_terminals;
     qk::STLGetKeys(stack_op.second, &enclosed_non_terminals);
@@ -271,12 +271,12 @@ void ConstructTree(const vector<ParsingStream>& parsing_stream,
       } else {  // ps.first == BRANCH_END_MARKER
         branching_stack.back()->end = i;
         branching_stack.pop_back();
-        APARSE_DEBUG_ASSERT(branching_stack.size() > 0);
+        APARSE_ASSERT(branching_stack.size() > 0);
       }
     }
   }
-  APARSE_DEBUG_ASSERT(branching_stack.size() == 1);
-  APARSE_DEBUG_ASSERT(output->children.size() > 0);
+  APARSE_ASSERT(branching_stack.size() == 1);
+  APARSE_ASSERT(output->children.size() > 0);
 }
 
 }  // namespace

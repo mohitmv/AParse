@@ -461,7 +461,7 @@ AParseGrammar helpers::StringRulesToAParseGrammar(
            .StringValue(string("Rule: ") + rule_string + "\n");
       throw error;
     }
-    APARSE_DEBUG_ASSERT(rule.type == ParsedGrammarRule::RULE);
+    APARSE_ASSERT(rule.type == ParsedGrammarRule::RULE);
     non_terminals[rule.value];
     lExtractTerminals(rule.children[0]);
     rules.push_back(std::move(rule));
@@ -480,7 +480,7 @@ AParseGrammar helpers::StringRulesToAParseGrammar(
   int max_alphabet = 0;
   for (auto& item : string_map) {
     max_alphabet = std::max(max_alphabet, item.second);
-    APARSE_DEBUG_ASSERT(not qk::ContainsKey(non_terminals, item.first));
+    APARSE_ASSERT(not qk::ContainsKey(non_terminals, item.first));
   }
   int index = max_alphabet+1;
   for (auto& item : non_terminals) {
@@ -490,7 +490,7 @@ AParseGrammar helpers::StringRulesToAParseGrammar(
     if (qk::ContainsKey(string_map, item.first)) {
       item.second = string_map.at(item.first);
     } else {
-      APARSE_DEBUG_ASSERT(qk::ContainsKey(non_terminals, item.first),
+      APARSE_ASSERT(qk::ContainsKey(non_terminals, item.first),
                            item.first);
       item.second = non_terminals[item.first];
     }
@@ -556,13 +556,13 @@ AParseGrammar helpers::StringRulesToAParseGrammar(
   }
   grammar.alphabet_size = 1 + max_alphabet;
   for (auto& item : branching_alphabets) {
-    APARSE_DEBUG_ASSERT(qk::ContainsKey(string_map, item.first));
-    APARSE_DEBUG_ASSERT(qk::ContainsKey(string_map, item.second));
+    APARSE_ASSERT(qk::ContainsKey(string_map, item.first));
+    APARSE_ASSERT(qk::ContainsKey(string_map, item.second));
     grammar.branching_alphabets.push_back(
         make_pair(string_map.at(item.first),
                   string_map.at(item.second)));
   }
-  APARSE_DEBUG_ASSERT(qk::ContainsKey(non_terminals, main_non_terminal));
+  APARSE_ASSERT(qk::ContainsKey(non_terminals, main_non_terminal));
   grammar.main_non_terminal = non_terminals.at(main_non_terminal);
   return grammar;
 }

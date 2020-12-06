@@ -204,8 +204,8 @@ void InternalAParseGrammar::Init(const AParseGrammar& grammar) {
                     &topological_sorted_non_terminals,
                     &cycle_path);
   (void)status;
-  APARSE_DEBUG_ASSERT(status);
-  APARSE_DEBUG_ASSERT(topological_sorted_non_terminals.size() > 0);
+  APARSE_ASSERT(status);
+  APARSE_ASSERT(topological_sorted_non_terminals.size() > 0);
 
   // Step-6: Misc steps
   main_non_terminal = grammar.main_non_terminal;

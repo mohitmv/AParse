@@ -13,7 +13,7 @@
 namespace aparse {
 
 const vector<Alphabet>& ParserInstance::GetStream() const {
-  APARSE_DEBUG_ASSERT(core_parser != nullptr);
+  APARSE_ASSERT(core_parser != nullptr);
   return core_parser->GetStream();
 }
 

@@ -142,7 +142,7 @@ string Regex::DebugString(
         break;
       }
       default:
-        APARSE_DEBUG_ASSERT(false, (int)input.type);
+        APARSE_ASSERT(false, (int)input.type);
         break;
     }
     if (input.label > 0) {
