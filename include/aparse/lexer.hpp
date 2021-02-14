@@ -99,17 +99,9 @@ class LexerInstance {
       InvokeRuleAction(state->label);
       current_state = section_to_start_state_mapping->at(
                                       scope->__lexing_constructs.next_section);
+      token_start_current_state = current_state;
       state = &machine->dfa.states[current_state];
-      for (auto b : buffer) {
-        if (b == static_cast<unsigned char>('\n')) {
-          scope->__lexing_constructs.line_number++;
-          scope->__lexing_constructs.column_number = 0;
-        } else {
-          scope->__lexing_constructs.column_number++;
-        }
-      }
-      token_start = token_end;
-      buffer.clear();
+      FlushBuffer();
     }
     if (qk::ContainsKey(state->edges, a)) {
       current_state = state->edges.at(a);
@@ -119,6 +111,59 @@ class LexerInstance {
     buffer.push_back(a);
     token_end++;
     return true;
+  }
+
+  inline int32_t TokenStartPosition() const { return token_start; }
+  inline int32_t TokenEndPosition() const { return token_end; }
+
+  // Returns false if there was no need of flushing buffer because buffer was
+  // already empty. In that case this method will be simply a nop.
+  // Returns true otherwise.
+  bool FlushBuffer() {
+    for (auto b : buffer) {
+      UpdateLineAndColumnNumberOnAlphabetFeed(b);
+    }
+    token_start = token_end;
+    if (buffer.size() == 0) {
+      return false;
+    }
+    buffer.clear();
+    return true;
+  }
+
+  // Returns false if there was no incomplete token. In that case this method
+  // will be simply a nop. Drops the current incomplete token o.w. and returns
+  // true.
+  bool DropIncompleteTokenSkipAlphabets() {
+    current_state = token_start_current_state;
+    return FlushBuffer();
+  }
+
+  bool DropIncompleteToken() {
+    current_state = token_start_current_state;
+    token_start = token_end;
+    if (buffer.size() == 0) {
+      return false;
+    }
+    buffer.clear();
+    return true;
+  }
+
+  void UpdateLineAndColumnNumberOnAlphabetFeed(Alphabet a) {
+    if (a == static_cast<unsigned char>('\n')) {
+      scope->__lexing_constructs.line_number++;
+      scope->__lexing_constructs.column_number = 0;
+    } else {
+      scope->__lexing_constructs.column_number++;
+    }
+  }
+
+  // Ignore this given alphabet from feeding to lexer. However count this
+  // alphabet in token indexing, line numbering etc. 
+  void SkipAlphabet(Alphabet a) {
+    UpdateLineAndColumnNumberOnAlphabetFeed(a);
+    token_end++;
+    token_start++;
   }
 
   void EndOrDie() {
@@ -149,6 +194,7 @@ class LexerInstance {
   void Reset() {
     scope->__lexing_constructs.next_section = main_section;
     current_state = machine->dfa.start_state;
+    token_start_current_state = current_state;
     token_start = 0;
     token_end = 0;
   }
@@ -166,12 +212,15 @@ class LexerInstance {
     }
   }
 
-
  public:
   const LexerMachine* machine;
   const unordered_map<int, int>* section_to_start_state_mapping;
   const unordered_map<int, utils::any>* pattern_actions;
-  int current_state, token_start = 0, token_end = 0;
+  int token_start = 0, token_end = 0;
+  int current_state;
+  // Current state at the starting point of current token. It's useful for
+  // dropping the current-incomplete token in case of error in current token.
+  int token_start_current_state;
   std::vector<Alphabet> buffer;
   int main_section;
   // not owned.

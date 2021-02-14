@@ -25,25 +25,13 @@ configs.dependency_configs = [
       local_include_dir = [ toolchain_path+ "/googletest-release-1.8.1/googletest" ],
       global_link_flags = "-lpthread"),
 
-  br.CppLibrary("toolchain/json11",
-                      srcs = [toolchain_path + "/json11-original/json/json11.cpp"],
-                      global_include_dir = [ toolchain_path + "/json11-original"]),
+  # br.CppLibrary("toolchain/json11",
+  #                     srcs = [toolchain_path + "/json11-original/json/json11.cpp"],
+  #                     global_include_dir = [ toolchain_path + "/json11-original"]),
 
   br.CppLibrary("toolchain/quick",
                       srcs = [projects_path + "/quick/src/quick-all.cpp"],
                       global_include_dir = [projects_path + "/quick/include"]),
-
-  # br.CppLibrary("src/lexer",
-  #               hdrs = ["include/aparse/lexer.hpp"],
-  #               srcs = ["src/lexer.cpp"]),
-
-  br.CppLibrary("src/aparse",
-                hdrs = ["include/aparse/aparse.hpp"],
-                srcs = ["src/aparse.cpp"],
-                deps = ["toolchain/quick"]),
-
-  br.CppTest("tests/combined_aparse_test",
-                deps = ["src/aparse"]),
 
   br.CppLibrary("tests/samples/sample_internal_parser_rules",
                 hdrs = ["tests/samples/sample_internal_parser_rules.hpp"],
@@ -307,11 +295,11 @@ configs.dependency_configs = [
                 srcs = ["src/utils/any_test.cpp"],
                 deps = ["aparse/utils/any"]),
 
-  br.CppProgram("tools/experiments/parser1",
-                ignore_cpplint = True,
-                srcs = ["tools/experiments/parser1.cpp"],
-                deps = ["src/internal_parser",
-                        "toolchain/quick"]),
+  # br.CppProgram("tools/experiments/parser1",
+  #               ignore_cpplint = True,
+  #               srcs = ["tools/experiments/parser1.cpp"],
+  #               deps = ["src/internal_parser",
+  #                       "toolchain/quick"]),
 
   br.CppLibrary("tools/experiments/try2",
                 ignore_cpplint = True,
