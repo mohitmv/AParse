@@ -99,6 +99,18 @@ TEST_F(NFABuilderTest, DISABLED_UnionRegex) {
   builder.Build(r, &nfa);
 }
 
+TEST_F(NFABuilderTest, Bug1) {
+  auto r = Regex(Regex::CONCAT, {
+      Regex(Regex::UNION, {Regex::EPSILON, Regex(80)}),
+      Regex(Regex::UNION, {Regex::EPSILON, Regex(Regex::UNION,
+        {Regex(38), Regex(40)})}),
+      Regex(Regex::UNION, {Regex::EPSILON, Regex(39)}),
+      Regex(81),
+      Regex(Regex::UNION, {Regex::EPSILON, Regex(67)}),}).SetLabel(16);
+  NFA nfa;
+  builder.Build(r, &nfa);
+}
+
 TEST(BuildSampleGrammar, Grammar1) {
   auto g = test::SampleGrammar1();
   AParseMachineBuilder builder(g);
