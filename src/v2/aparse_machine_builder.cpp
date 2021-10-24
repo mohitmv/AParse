@@ -236,7 +236,7 @@ void NFABuilder::MergeEquivalentFinalState(SubNFA* snfa) {
             // invariant: fs != fs0
             nfa.edges.at(source_state).at(a)[fs0] = ps;
             nfa.edges.at(source_state).at(a).erase(fs);
-            nfa.local_incoming_edges.at(fs0)[a].insert(source_state);
+            nfa.local_incoming_edges[fs0][a].insert(source_state);
           }
         }
         nfa.local_incoming_edges.erase(fs);
