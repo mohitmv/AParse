@@ -17,7 +17,8 @@ projects_path = os.environ["HOME"] + "/projects"
 
 br = infra_lib.BuildRule();
 configs.dependency_configs = [
-
+  # cd ~/toolchain
+  # git clone https://github.com/google/googletest.git  -b release-1.8.1 googletest-release-1.8.1
   br.CppLibrary(
       "toolchain/gtest",
       srcs = [ toolchain_path + "/googletest-release-1.8.1/googletest/src/gtest-all.cc" ],
@@ -29,6 +30,9 @@ configs.dependency_configs = [
                       srcs = [toolchain_path + "/json11-original/json/json11.cpp"],
                       global_include_dir = [ toolchain_path + "/json11-original"]),
 
+
+  # cd ~/projects
+  # git clone https://github.com/mohitmv/quick.git
   br.CppLibrary("toolchain/quick",
                       srcs = [projects_path + "/quick/src/quick-all.cpp"],
                       global_include_dir = [projects_path + "/quick/include"]),
@@ -248,6 +252,16 @@ configs.dependency_configs = [
   #                       "src/aparse_machine_builder_v2",
   #                       "src/parse_regex_rule"]),
 
+  br.CppTest("tests/bug3_test",
+                srcs = ["tests/bug3_test.cpp"],
+                deps = [
+                # "src/v2/core_parser",
+                        # "src/v2/aparse_machine_builder",
+                        "aparse/parser",
+                        "aparse/parser_builder",
+                        # "src/parse_regex_rule"
+                        ]),
+
 
   # br.CppTest("src/internal_parser_integration_test",
   #               srcs = ["src/internal_parser_integration_test.cpp"],
@@ -341,8 +355,8 @@ configs.dependency_configs = [
 
 configs["LINKFLAGS"] = ""
 if (os.environ.get("DEV_MACHINE") == "ts"):
-  configs["CXX"] = "/usr/local/scaligent/toolchain/crosstool/v4/x86_64-unknown-linux-gnu/bin/x86_64-unknown-linux-gnu-g++";
-  configs["LINKFLAGS"] = "-Wl,--compress-debug-sections=zlib -Wl,--dynamic-linker=/usr/local/scaligent/toolchain/crosstool/v4/x86_64-unknown-linux-gnu/x86_64-unknown-linux-gnu/sysroot/lib/ld-linux-x86-64.so.2 -B/usr/local/scaligent/toolchain/crosstool/v4/x86_64-unknown-linux-gnu/x86_64-unknown-linux-gnu/bin.gold -Wl,-rpath=/usr/local/scaligent/toolchain/crosstool/v4/x86_64-unknown-linux-gnu/x86_64-unknown-linux-gnu/sysroot/lib -Wl,--no-whole-archive ";
+  configs["CXX"] = "/usr/local/scaligent/toolchain/crosstool/v5/x86_64-unknown-linux-gnu/bin/x86_64-unknown-linux-gnu-g++";
+  configs["LINKFLAGS"] = "-Wl,--compress-debug-sections=zlib -Wl,--dynamic-linker=/usr/local/scaligent/toolchain/crosstool/v5/x86_64-unknown-linux-gnu/x86_64-unknown-linux-gnu/sysroot/lib/ld-linux-x86-64.so.2 -B/usr/local/scaligent/toolchain/crosstool/v5/x86_64-unknown-linux-gnu/x86_64-unknown-linux-gnu/bin.gold -Wl,-rpath=/usr/local/scaligent/toolchain/crosstool/v5/x86_64-unknown-linux-gnu/x86_64-unknown-linux-gnu/sysroot/lib -Wl,--no-whole-archive ";
 
 def SetCompilerOps(compiler_options):
   configs.compiler_options.update(compiler_options);

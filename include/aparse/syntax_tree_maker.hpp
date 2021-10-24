@@ -8,6 +8,7 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include <functional>
 
 #include "quick/stl_utils.hpp"
 
