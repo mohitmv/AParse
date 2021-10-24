@@ -96,7 +96,7 @@ static const unordered_map<string, LexerScope> kKeywords = {
   {"not", LexerScope::NOT_KEYWORD},
 };
 
-void BuildParser(aparse::Parser* parser, const std::string main_non_terminal = "main") {
+void BuildParser(aparse::Parser* parser) {
   using Rule = aparse::ParserGrammar::Rule;
   aparse::ParserGrammar grammar;
   grammar.string_to_alphabet_map = {
@@ -111,111 +111,37 @@ void BuildParser(aparse::Parser* parser, const std::string main_non_terminal = "
   for (auto& item : kKeywords) {
     grammar.string_to_alphabet_map.emplace(item.first, item.second);
   }
-  grammar.branching_alphabets = {{"if", "else"},
-                                 {"(", ")"},
-                                 {"{", "}"}};
-  grammar.main_non_terminal = main_non_terminal;
+  grammar.main_non_terminal = "main";
   grammar.rules = {
-    Rule("main ::= global_instruction*")
+    Rule("main ::= int_constant")
       ,
-    Rule("global_instruction ::=   enum_declaration "
-                                "| type_union_declaration "
-                                "| signature_block "
-                                "| global_variable_definition")
+    Rule("global_instruction ::= int_constant ")
       ,
     Rule("literal_expr ::= literal")
       ,
-    Rule("type_keyword_expr ::= type_keyword")
-      ,
     Rule("type_union_expr ::= literal | type_keyword")
       ,
-    Rule("string_constant_expr ::= string_constant")
+    Rule("string_constant_expr ::= int_constant")
       ,
-    Rule("enum_declaration ::= 'enum' literal '{' ((literal_expr ',')* "
-                                "literal_expr)? '}' ';'")
+    Rule("enum_declaration ::= int_constant")
       ,
-    Rule("type_union_declaration ::= 'typeunion' literal '=' "
-                              "(type_keyword_expr '|')* type_keyword_expr ';'")
+    Rule("const_expr ::=   int_constant")
       ,
-    Rule("const_expr ::=   int_constant | string_constant | literal "
-                        "| double_constant | bool_constant")
+    Rule("const_sage_expr ::=   int_constant")
       ,
-    Rule("const_sage_expr ::=   int_constant | string_constant | literal "
-                             "| null | double_constant | bool_constant")
+    Rule("global_variable_definition ::= int_constant"),
+    Rule("annotation ::= int_constant")
       ,
-    Rule("global_variable_definition ::= literal '=' const_expr ';'"),
-    Rule("annotation ::= annotation_name '(' ((const_expr ',')* const_expr)? "
-                                                                "')'")
+    Rule("aggregation_specifiers ::=  int_constant")
       ,
-    Rule("aggregation_specifiers ::=   'group_aggregated' "
-                                    "| 'aggregated' "
-                                    "| 'non_aggregated'")
-      ,
-    Rule("format_specifiers ::=    'date_time_format_pattern' "
-                                "| 'time_format_pattern' "
-                                "| 'year_format_pattern' "
-                                "| 'date_format_pattern' ")
+    Rule("format_specifiers ::=    int_constant ")
       ,
     Rule("op_expr ::=  'not' | '-' | '+' | '*' | '/' | '^' | 'and' | 'or' "
                      "| 'in' | '<' | '>' | '=' | '!=' | '<=' | '>=' | 'not_in'")
       ,
     Rule("declaration_input_arg_expr ::= aggregation_specifiers? "
                                         "('optional' | 'repeated')? 'const'? "
-                                        "type_union_expr literal_expr?")
-      ,
-    Rule("declaration_input_args_expr ::= ((declaration_input_arg_expr ',')* "
-                                          "declaration_input_arg_expr)?")
-      ,
-    Rule("io_declaration ::= format_specifiers? aggregation_specifiers? "
-                             "type_union_expr "
-                             "(literal_expr | ('operator' op_expr )) "
-                             "'(' declaration_input_args_expr ')'")
-      ,
-    Rule("in_function_var_decl ::= literal '=' formula_expr ';'")
-      ,
-    Rule("signature_body ::= in_function_var_decl* 'return' formula_expr ';'")
-      ,
-    Rule("template_expr ::= 'template' '<' 'typename' literal ':' literal '>'")
-      ,
-    Rule("signature_block ::= annotation* "
-                    "template_expr? "
-                    "io_declaration+ (';' | '{' signature_body '}')")
-      ,
-    Rule("list_expr ::= EPSILON | (formula_expr ',')* formula_expr ")
-      ,
-    Rule("list_expr_atom ::= '{' list_expr '}' ")
-      ,
-    Rule("expr_function_atom ::= literal '(' list_expr ')'")
-      ,
-    Rule("formula_expr_atom_no_if ::=  const_sage_expr "
-                            "| '(' formula_expr ')' "
-                            "| list_expr_atom "
-                            "| expr_function_atom")
-      ,
-    Rule("formula_expr_if_content ::= '(' formula_expr ')' 'then' formula_expr")
-      ,
-    Rule("formula_expr_atom ::= ('if' formula_expr_if_content 'else')* "
-                                  "formula_expr_atom_no_if")
-      ,
-    Rule("expr_level_1 ::= ('-' | 'not')* formula_expr_atom")
-      ,
-    Rule("expr_level_3 ::= (expr_level_1 ('*'|'/'|'^'))* expr_level_1")
-      ,
-    Rule("expr_level_4 ::= (expr_level_3 ('+'|'-'))* expr_level_3")
-      ,
-    Rule("expr_level_5_1 ::= expr_level_4 ('<'|'>'|'<='|'>=') expr_level_4 ")
-      ,
-    Rule("expr_level_5_2 ::= (expr_level_4 ('='|'!='))* expr_level_4")
-      ,
-    Rule("expr_level_5 ::= expr_level_5_1 | expr_level_5_2")
-      ,
-    Rule("expr_level_6 ::= expr_level_5 (('in'|'not_in') expr_level_5)* ")
-      ,
-    // Rule("expr_level_7 ::= expr_level_6 ('not_in' expr_level_6)* ")
-      // ,
-    Rule("expr_level_7 ::= (expr_level_6 'and')* expr_level_6")
-      ,
-    Rule("formula_expr ::= (expr_level_7 'or')* expr_level_7")
+                                        "type_union_expr")
       ,
   };
   aparse::ParserBuilder parser_builder;
